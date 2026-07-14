@@ -9,35 +9,55 @@
       maxWounds: 9,
       weapon: "Gauss flayer or gauss reaper",
       move: 5,
-      save: "4+"
+      save: "4+",
+      attackDice: 4,
+      hit: 4,
+      normalDamage: 3,
+      critDamage: 4
     },
     "Canoptek Scarab Swarm": {
       behavior: "brawler",
       maxWounds: 10,
       weapon: "Feeder mandibles",
       move: 6,
-      save: "5+"
+      save: "5+",
+      attackDice: 5,
+      hit: 4,
+      normalDamage: 3,
+      critDamage: 4
     },
     "Canoptek Macrocyte": {
       behavior: "sentinel",
       maxWounds: 7,
       weapon: "Gauss scalpel or tesla caster",
       move: 7,
-      save: "4+"
+      save: "4+",
+      attackDice: 4,
+      hit: 4,
+      normalDamage: 3,
+      critDamage: 4
     },
     "Canoptek Tomb Crawler": {
       behavior: "sentinel",
       maxWounds: 21,
       weapon: "Twin gauss reapers or transdimensional isolator",
       move: 5,
-      save: "3+"
+      save: "3+",
+      attackDice: 5,
+      hit: 3,
+      normalDamage: 4,
+      critDamage: 5
     },
     "Custom NPO": {
       behavior: "guardian",
       maxWounds: 8,
       weapon: "Custom weapon",
       move: 6,
-      save: "4+"
+      save: "4+",
+      attackDice: 4,
+      hit: 4,
+      normalDamage: 3,
+      critDamage: 4
     }
   };
 
@@ -242,6 +262,17 @@
     npoMaxWounds: byId("npoMaxWounds"),
     npoWounds: byId("npoWounds"),
     npoWeapon: byId("npoWeapon"),
+    npoAttackDice: byId("npoAttackDice"),
+    npoHit: byId("npoHit"),
+    npoNormalDamage: byId("npoNormalDamage"),
+    npoCritDamage: byId("npoCritDamage"),
+    attackDialog: byId("attackDialog"),
+    attackForm: byId("attackForm"),
+    attackDialogTitle: byId("attackDialogTitle"),
+    attackTargetId: byId("attackTargetId"),
+    attackTargetStatus: byId("attackTargetStatus"),
+    combatResultPreview: byId("combatResultPreview"),
+    resolveAttackBtn: byId("resolveAttackBtn"),
     importInput: byId("importInput")
   };
 
@@ -281,6 +312,10 @@
     els.importInput.addEventListener("change", importSave);
     els.npoType.addEventListener("change", applyTemplateToDialog);
     els.npoForm.addEventListener("submit", saveNpoFromDialog);
+    els.attackForm.addEventListener("submit", resolvePlayerAttack);
+    document.querySelectorAll("[data-tab]").forEach(button => {
+      button.addEventListener("click", () => activateUtilityTab(button.dataset.tab));
+    });
 
     const snapshotMap = {
       ctxEngaged: "engaged",
@@ -301,6 +336,19 @@
         state.snapshot[key] = el.type === "checkbox" ? el.checked : el.value;
         saveState();
       });
+    });
+  }
+
+  function activateUtilityTab(panelId) {
+    document.querySelectorAll("[data-tab]").forEach(button => {
+      const active = button.dataset.tab === panelId;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-selected", String(active));
+    });
+    document.querySelectorAll(".tab-panel").forEach(panel => {
+      const active = panel.id === panelId;
+      panel.classList.toggle("active", active);
+      panel.hidden = !active;
     });
   }
 
@@ -382,6 +430,7 @@
       const stateLabel = npo.wounds <= 0 ? "Incapacitated" : npo.ready ? "Ready" : "Expended";
       return `
         <article class="${classes.join(" ")}" data-npo-id="${npo.id}">
+          ${npo.wounds <= 0 ? '<span class="skull-watermark" aria-label="Incapacitated">☠</span>' : ""}
           <div class="npo-head">
             <div>
               <h3 class="npo-name">${escapeHtml(npo.name)}</h3>
@@ -394,6 +443,8 @@
             <div class="meter"><span style="width:${percent}%"></span></div>
           </div>
           <div class="npo-weapon">${escapeHtml(npo.weapon || "No weapon note")}</div>
+          <div class="npo-profile">Attack ${npo.attackDice || 4} · Hit ${npo.hit || 4}+ · Damage ${npo.normalDamage || 3}/${npo.critDamage || 4}</div>
+          <button type="button" class="resolve-player-attack" data-action="resolve-attack" ${npo.wounds <= 0 ? "disabled" : ""}>Resolve Player Attack</button>
           <div class="npo-controls">
             <button type="button" data-action="damage" title="Apply one damage">−1 W</button>
             <button type="button" data-action="heal" title="Restore one wound">+1 W</button>
@@ -436,6 +487,24 @@
       return;
     }
 
+    const attackMarkup = result.attackRoll ? `
+      <section class="attack-roll-panel">
+        <div class="attack-roll-heading">
+          <div>
+            <p class="eyebrow">${escapeHtml(result.attackRoll.action)} DICE</p>
+            <h4>${escapeHtml(result.attackRoll.weapon)}</h4>
+          </div>
+          <span class="profile-chip">${result.attackRoll.dice.length} dice · ${result.attackRoll.hit}+ · ${result.attackRoll.normalDamage}/${result.attackRoll.critDamage} damage</span>
+        </div>
+        <div class="dice-tray" aria-label="Enemy attack dice results">${renderDice(result.attackRoll.dice)}</div>
+        <div class="roll-summary">
+          <strong class="crit-text">${result.attackRoll.crits} critical</strong>
+          <strong class="hit-text">${result.attackRoll.hits} normal hit${result.attackRoll.hits === 1 ? "" : "s"}</strong>
+          <span>${result.attackRoll.misses} miss${result.attackRoll.misses === 1 ? "" : "es"}</span>
+        </div>
+        <p class="dice-note">Attack dice are rolled automatically. Resolve the player operative's defence and special rules on the tabletop.</p>
+      </section>` : "";
+
     els.activationOutput.innerHTML = `
       <div class="activation-result">
         <div class="activation-result-head">
@@ -453,8 +522,17 @@
               <span><strong>${escapeHtml(action.title)}</strong>${escapeHtml(action.detail)}</span>
             </li>`).join("")}
         </ol>
+        ${attackMarkup}
         <p class="rationale"><strong>Threat principle:</strong> ${escapeHtml(result.rationale)}</p>
       </div>`;
+  }
+
+  function renderDice(dice) {
+    return dice.map(die => `
+      <span class="die ${die.kind}" title="${escapeHtml(die.label)}">
+        <span class="die-face">${die.value}</span>
+        <small>${escapeHtml(die.label)}</small>
+      </span>`).join("");
   }
 
   function activateNextEnemy() {
@@ -476,11 +554,36 @@
 
     const selected = selectNpoByThreat(ready, state.snapshot);
     const result = resolveBehavior(selected, state.snapshot);
+    result.attackRoll = rollNpoAttack(selected, result);
     selected.ready = false;
     selected.activations = (selected.activations || 0) + 1;
     state.lastActivation = result;
     addLog(`${selected.name} activated: ${result.actions.map(a => a.title).join(" → ")}.`);
     saveAndRender();
+  }
+
+  function rollNpoAttack(npo, result) {
+    const attackAction = result.actions.find(action => /shoot|fight/i.test(action.title));
+    if (!attackAction) return null;
+    const count = Math.max(1, Number(npo.attackDice || 4));
+    const hit = Math.max(2, Math.min(6, Number(npo.hit || 4)));
+    const dice = Array.from({ length: count }, () => {
+      const value = randomInt(1, 6);
+      if (value === 6) return { value, kind: "critical", label: "Critical hit" };
+      if (value >= hit) return { value, kind: "hit", label: "Normal hit" };
+      return { value, kind: "miss", label: "Miss" };
+    });
+    return {
+      action: attackAction.title,
+      weapon: npo.weapon || "NPO attack",
+      hit,
+      normalDamage: Number(npo.normalDamage || 3),
+      critDamage: Number(npo.critDamage || 4),
+      dice,
+      crits: dice.filter(d => d.kind === "critical").length,
+      hits: dice.filter(d => d.kind === "hit").length,
+      misses: dice.filter(d => d.kind === "miss").length
+    };
   }
 
   function selectNpoByThreat(npos, ctx) {
@@ -777,6 +880,9 @@
         npo.ready = false;
         addLog(`${npo.name} was incapacitated.`);
         break;
+      case "resolve-attack":
+        openAttackDialog(npo);
+        return;
       case "edit":
         openNpoDialog(npo);
         return;
@@ -808,6 +914,10 @@
       els.npoMaxWounds.value = npo.maxWounds;
       els.npoWounds.value = npo.wounds;
       els.npoWeapon.value = npo.weapon || "";
+      els.npoAttackDice.value = npo.attackDice || 4;
+      els.npoHit.value = npo.hit || 4;
+      els.npoNormalDamage.value = npo.normalDamage || 3;
+      els.npoCritDamage.value = npo.critDamage || 4;
     } else {
       els.dialogTitle.textContent = "Add NPO";
       els.editNpoId.value = "";
@@ -824,10 +934,18 @@
     els.npoMaxWounds.value = template.maxWounds;
     els.npoWounds.value = template.maxWounds;
     els.npoWeapon.value = template.weapon;
+    els.npoAttackDice.value = template.attackDice || 4;
+    els.npoHit.value = template.hit || 4;
+    els.npoNormalDamage.value = template.normalDamage || 3;
+    els.npoCritDamage.value = template.critDamage || 4;
   }
 
   function saveNpoFromDialog(event) {
     event.preventDefault();
+    if (event.submitter?.value === "cancel") {
+      els.npoDialog.close();
+      return;
+    }
     const maxWounds = Math.max(1, Number(els.npoMaxWounds.value));
     const wounds = Math.max(0, Math.min(maxWounds, Number(els.npoWounds.value)));
     const template = NPO_TEMPLATES[els.npoType.value] || NPO_TEMPLATES["Custom NPO"];
@@ -840,7 +958,11 @@
       wounds,
       weapon: els.npoWeapon.value.trim(),
       move: template.move,
-      save: template.save
+      save: template.save,
+      attackDice: Math.max(1, Number(els.npoAttackDice.value || 4)),
+      hit: Math.max(2, Math.min(6, Number(els.npoHit.value || 4))),
+      normalDamage: Math.max(1, Number(els.npoNormalDamage.value || 3)),
+      critDamage: Math.max(1, Number(els.npoCritDamage.value || 4))
     };
 
     if (existing) Object.assign(existing, data);
@@ -849,6 +971,106 @@
     els.npoDialog.close();
     addLog(`${data.name} ${existing ? "updated" : "added"}.`);
     saveAndRender();
+  }
+
+  function openAttackDialog(npo) {
+    els.attackTargetId.value = npo.id;
+    els.attackDialogTitle.textContent = `Attack ${npo.name}`;
+    els.attackTargetStatus.innerHTML = `<strong>${escapeHtml(npo.name)}</strong><span>${npo.wounds} / ${npo.maxWounds} wounds · Save ${escapeHtml(npo.save || "4+")}</span>`;
+    byId("playerNormalHits").value = 2;
+    byId("playerCritHits").value = 0;
+    byId("playerNormalDamage").value = 3;
+    byId("playerCritDamage").value = 4;
+    byId("defenceDice").value = 3;
+    byId("attackAp").value = 0;
+    byId("retainCoverSave").checked = false;
+    els.combatResultPreview.innerHTML = `<p class="muted">Enter the player attack result, then roll the NPO's saves.</p>`;
+    els.resolveAttackBtn.disabled = false;
+    els.resolveAttackBtn.textContent = "Roll Saves & Apply Damage";
+    els.attackDialog.showModal();
+  }
+
+  function resolvePlayerAttack(event) {
+    event.preventDefault();
+    if (event.submitter?.value === "cancel") {
+      els.attackDialog.close();
+      return;
+    }
+    const npo = state.npos.find(n => n.id === els.attackTargetId.value);
+    if (!npo || npo.wounds <= 0 || els.resolveAttackBtn.disabled) return;
+
+    const normalHits = Math.max(0, Number(byId("playerNormalHits").value || 0));
+    const critHits = Math.max(0, Number(byId("playerCritHits").value || 0));
+    const normalDamage = Math.max(1, Number(byId("playerNormalDamage").value || 1));
+    const critDamage = Math.max(1, Number(byId("playerCritDamage").value || 1));
+    const defenceDice = Math.max(0, Number(byId("defenceDice").value || 0));
+    const ap = Math.max(0, Number(byId("attackAp").value || 0));
+    const availableDefenceDice = Math.max(0, defenceDice - ap);
+    const coverRetained = byId("retainCoverSave").checked && availableDefenceDice > 0 ? 1 : 0;
+    const rolledDice = Math.max(0, availableDefenceDice - coverRetained);
+    const saveTarget = parseSaveTarget(npo.save);
+    const saves = Array.from({ length: rolledDice }, () => {
+      const value = randomInt(1, 6);
+      if (value === 6) return { value, kind: "critical", label: "Critical save" };
+      if (value >= saveTarget) return { value, kind: "hit", label: "Normal save" };
+      return { value, kind: "miss", label: "Failed save" };
+    });
+    const criticalSaves = saves.filter(d => d.kind === "critical").length;
+    const normalSaves = saves.filter(d => d.kind === "hit").length + coverRetained;
+    const outcome = calculateOptimalDamage({ normalHits, critHits, normalDamage, critDamage, normalSaves, criticalSaves });
+    const before = npo.wounds;
+    npo.wounds = Math.max(0, npo.wounds - outcome.damage);
+    if (npo.wounds === 0) npo.ready = false;
+
+    const displayDice = [...saves];
+    if (coverRetained) displayDice.push({ value: "C", kind: "cover", label: "Retained cover save" });
+    els.combatResultPreview.innerHTML = `
+      <div class="combat-result-head">
+        <div><span class="event-tag">SAVE ROLL</span><h3>${escapeHtml(npo.name)}</h3></div>
+        <strong class="damage-total">${outcome.damage} damage</strong>
+      </div>
+      <div class="dice-tray save-dice">${renderDice(displayDice)}</div>
+      <div class="combat-breakdown">
+        <span>${criticalSaves} critical save${criticalSaves === 1 ? "" : "s"}</span>
+        <span>${normalSaves} normal save${normalSaves === 1 ? "" : "s"}${coverRetained ? " including cover" : ""}</span>
+        <span>${outcome.remainingCrits} critical and ${outcome.remainingNormals} normal hit${outcome.remainingNormals === 1 ? "" : "s"} get through</span>
+      </div>
+      <div class="wound-change ${npo.wounds === 0 ? "killed" : ""}">
+        <strong>${before} → ${npo.wounds} wounds</strong>
+        <span>${npo.wounds === 0 ? "NPO incapacitated" : `${npo.wounds} wounds remaining`}</span>
+      </div>`;
+
+    addLog(`${npo.name} rolled ${criticalSaves} critical and ${normalSaves} normal saves, suffered ${outcome.damage} damage, and fell from ${before} to ${npo.wounds} wounds.`);
+    els.resolveAttackBtn.disabled = true;
+    els.resolveAttackBtn.textContent = "Damage Applied";
+    saveState();
+    renderRoster();
+    renderLog();
+  }
+
+  function calculateOptimalDamage({ normalHits, critHits, normalDamage, critDamage, normalSaves, criticalSaves }) {
+    let best = null;
+    for (let critSavesOnCrit = 0; critSavesOnCrit <= Math.min(criticalSaves, critHits); critSavesOnCrit += 1) {
+      const critSavesLeft = criticalSaves - critSavesOnCrit;
+      for (let critSavesOnNormal = 0; critSavesOnNormal <= Math.min(critSavesLeft, normalHits); critSavesOnNormal += 1) {
+        const critsAfterCriticalSaves = critHits - critSavesOnCrit;
+        const normalsAfterCriticalSaves = normalHits - critSavesOnNormal;
+        for (let normalPairsOnCrit = 0; normalPairsOnCrit <= Math.min(Math.floor(normalSaves / 2), critsAfterCriticalSaves); normalPairsOnCrit += 1) {
+          const normalSavesLeft = normalSaves - normalPairsOnCrit * 2;
+          const remainingCrits = critsAfterCriticalSaves - normalPairsOnCrit;
+          const remainingNormals = Math.max(0, normalsAfterCriticalSaves - normalSavesLeft);
+          const damage = remainingCrits * critDamage + remainingNormals * normalDamage;
+          const candidate = { damage, remainingCrits, remainingNormals };
+          if (!best || candidate.damage < best.damage || (candidate.damage === best.damage && candidate.remainingCrits < best.remainingCrits)) best = candidate;
+        }
+      }
+    }
+    return best || { damage: critHits * critDamage + normalHits * normalDamage, remainingCrits: critHits, remainingNormals: normalHits };
+  }
+
+  function parseSaveTarget(save) {
+    const value = Number.parseInt(String(save || "4+"), 10);
+    return Number.isFinite(value) ? Math.max(2, Math.min(6, value)) : 4;
   }
 
   function updateMissionProgress(delta) {
@@ -1014,6 +1236,10 @@
         ready: Boolean(n.ready),
         move: n.move || NPO_TEMPLATES[n.type]?.move || 6,
         save: n.save || NPO_TEMPLATES[n.type]?.save || "4+",
+        attackDice: Math.max(1, Number(n.attackDice || NPO_TEMPLATES[n.type]?.attackDice || 4)),
+        hit: Math.max(2, Math.min(6, Number(n.hit || NPO_TEMPLATES[n.type]?.hit || 4))),
+        normalDamage: Math.max(1, Number(n.normalDamage || NPO_TEMPLATES[n.type]?.normalDamage || 3)),
+        critDamage: Math.max(1, Number(n.critDamage || NPO_TEMPLATES[n.type]?.critDamage || 4)),
         activations: Number(n.activations || 0)
       })) : base.npos,
       log: Array.isArray(candidate.log) ? candidate.log : [],
@@ -1035,6 +1261,10 @@
       weapon: template.weapon,
       move: template.move,
       save: template.save,
+      attackDice: template.attackDice || 4,
+      hit: template.hit || 4,
+      normalDamage: template.normalDamage || 3,
+      critDamage: template.critDamage || 4,
       ready: true,
       activations: 0
     };

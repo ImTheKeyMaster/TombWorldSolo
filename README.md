@@ -4,13 +4,16 @@ A visual, static web app for running solo or cooperative Kill Team battles again
 
 ## Features
 
-- One-click **Activate Next Enemy** decision engine
+- One-click **Activate Next Enemy** decision engine with visual attack dice, highlighted critical hits, normal hits, and misses
 - Editable NPO roster with type, behavior, wounds, weapon note, ready state, and damage tracking
 - Default Necron Warrior, Scarab Swarm, Macrocyte, and Tomb Crawler profiles
 - 2D6-style Necron roster and reinforcement generation
 - Threat level and threat grade tracker
+- Tabbed Mission Control, Tomb Anomalies, and Battle Record tools for better mobile use
 - Six Tomb World mission-assistant presets with progress trackers
 - Random tomb events, including awakened Necrons, living metal repair, reanimation, shifting passages, and temporal effects
+- Player attack resolver that rolls NPO saves, applies AP and cover, calculates damage, and updates wounds automatically
+- Skull watermark on incapacitated NPO cards
 - Turning point and Strategy phase controls
 - Local browser saving, plus JSON import and export
 - Responsive layout for a Windows PC, tablet, or phone
@@ -45,7 +48,8 @@ The app follows the broad Joint Ops structure:
 2. Follow the selected NPO's behavior priority.
 3. Break ambiguous decisions using the threat principle, choosing the result most harmful to the player.
 4. Display the order, action sequence, target priority, movement intent, and weapon-profile guidance.
-5. The player rolls dice and resolves the official tabletop rules normally.
+5. Roll the primary NPO attack visually whenever the activation includes a Fight or Shoot action.
+6. The player resolves defence and special rules using the official datacards. Player attacks against an NPO can be entered through the NPO card, where the app rolls saves and applies damage.
 
 The **Battlefield Snapshot** supplies information the browser cannot see, such as whether the NPO is engaged, has a valid shot, can charge, or is blocked by a hatch. The settings remain in place, so repeated activations can still be performed with one click until the tabletop situation changes.
 

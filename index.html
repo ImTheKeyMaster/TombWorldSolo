@@ -112,8 +112,14 @@
       </div>
     </section>
 
-    <aside class="side-stack">
-      <section class="panel compact-panel" aria-labelledby="missionHeading">
+    <aside class="panel utility-tabs" aria-label="Mission, anomaly, and battle record tools">
+      <div class="tab-list" role="tablist" aria-label="Battle tools">
+        <button class="tab-button active" id="missionTab" type="button" role="tab" aria-selected="true" aria-controls="missionPanel" data-tab="missionPanel">Mission</button>
+        <button class="tab-button" id="eventTab" type="button" role="tab" aria-selected="false" aria-controls="eventPanel" data-tab="eventPanel">Anomalies</button>
+        <button class="tab-button" id="logTab" type="button" role="tab" aria-selected="false" aria-controls="logPanel" data-tab="logPanel">Battle Record</button>
+      </div>
+
+      <section class="tab-panel active" id="missionPanel" role="tabpanel" aria-labelledby="missionTab">
         <div class="panel-heading compact">
           <div>
             <p class="eyebrow">MISSION CONTROL</p>
@@ -125,7 +131,7 @@
         <div id="missionCard" class="mission-card"></div>
       </section>
 
-      <section class="panel compact-panel" aria-labelledby="eventHeading">
+      <section class="tab-panel" id="eventPanel" role="tabpanel" aria-labelledby="eventTab" hidden>
         <div class="panel-heading compact">
           <div>
             <p class="eyebrow">TOMB ANOMALIES</p>
@@ -139,7 +145,7 @@
         <button class="button secondary full" id="eventBtn" type="button">Draw Random Event</button>
       </section>
 
-      <section class="panel compact-panel" aria-labelledby="logHeading">
+      <section class="tab-panel" id="logPanel" role="tabpanel" aria-labelledby="logTab" hidden>
         <div class="panel-heading compact">
           <div>
             <p class="eyebrow">BATTLE RECORD</p>
@@ -193,7 +199,7 @@
         <article>
           <span class="logic-number">04</span>
           <h3>Resolve on the tabletop</h3>
-          <p>The app provides order, movement, target, profile, and action sequence. Roll attacks and apply Kill Team rules normally.</p>
+          <p>The app provides order, movement, target, action sequence, and a visual attack roll. Apply defence and special rules from the datacards you are using.</p>
         </article>
       </div>
     </section>
@@ -232,9 +238,52 @@
         <label>Current wounds<input id="npoWounds" type="number" min="0" max="99" value="9" required></label>
       </div>
       <label>Weapon or role note<input id="npoWeapon" maxlength="80" placeholder="Gauss reaper"></label>
+      <div class="form-split attack-profile-grid">
+        <label>Attack dice<input id="npoAttackDice" type="number" min="1" max="12" value="4" required></label>
+        <label>Hit on<input id="npoHit" type="number" min="2" max="6" value="4" required></label>
+        <label>Normal damage<input id="npoNormalDamage" type="number" min="1" max="12" value="3" required></label>
+        <label>Critical damage<input id="npoCritDamage" type="number" min="1" max="12" value="4" required></label>
+      </div>
+      <p class="form-note">Attack values power the visual dice roller. Adjust them to match the datacard or profile you are using.</p>
       <div class="modal-actions">
         <button class="button ghost" value="cancel" formmethod="dialog">Cancel</button>
         <button class="button primary" id="saveNpoBtn" value="default">Save NPO</button>
+      </div>
+    </form>
+  </dialog>
+
+
+
+  <dialog id="attackDialog" class="modal attack-modal">
+    <form id="attackForm" method="dialog">
+      <div class="modal-heading">
+        <div>
+          <p class="eyebrow">PLAYER ATTACK RESOLVER</p>
+          <h2 id="attackDialogTitle">Attack NPO</h2>
+        </div>
+        <button class="icon-button" value="cancel" formmethod="dialog" aria-label="Close">×</button>
+      </div>
+      <input id="attackTargetId" type="hidden">
+      <div class="target-status" id="attackTargetStatus"></div>
+      <div class="form-split">
+        <label>Normal hits rolled<input id="playerNormalHits" type="number" min="0" max="20" value="2" required></label>
+        <label>Critical hits rolled<input id="playerCritHits" type="number" min="0" max="20" value="0" required></label>
+      </div>
+      <div class="form-split">
+        <label>Normal damage<input id="playerNormalDamage" type="number" min="1" max="20" value="3" required></label>
+        <label>Critical damage<input id="playerCritDamage" type="number" min="1" max="20" value="4" required></label>
+      </div>
+      <div class="form-split">
+        <label>Defence dice<input id="defenceDice" type="number" min="0" max="6" value="3" required></label>
+        <label>AP reduction<input id="attackAp" type="number" min="0" max="3" value="0" required></label>
+      </div>
+      <label class="toggle compact-toggle"><input id="retainCoverSave" type="checkbox"><span>Retain one normal save for cover</span></label>
+      <div class="combat-result-preview" id="combatResultPreview">
+        <p class="muted">Enter the player attack result, then roll the NPO's saves.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="button ghost" value="cancel" formmethod="dialog">Cancel</button>
+        <button class="button primary" id="resolveAttackBtn" value="default">Roll Saves &amp; Apply Damage</button>
       </div>
     </form>
   </dialog>

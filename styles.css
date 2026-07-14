@@ -356,3 +356,168 @@ select, input[type="text"], input[type="number"], input:not([type]) {
   .npo-controls { grid-template-columns: repeat(2, 1fr); }
   .activation-result-head { flex-direction: column; }
 }
+
+/* Tabbed utility rail */
+.utility-tabs { min-width: 0; }
+.tab-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(0, 0, 0, .22);
+}
+.tab-button {
+  min-width: 0;
+  padding: 10px 7px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: .72rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+.tab-button:hover { color: var(--green-bright); }
+.tab-button.active {
+  color: #03130a;
+  border-color: rgba(144,255,197,.5);
+  background: linear-gradient(135deg, #33da83, #8dffc1);
+  box-shadow: 0 7px 20px rgba(44,234,130,.12);
+}
+.tab-panel { padding: 19px; }
+.tab-panel[hidden] { display: none; }
+
+/* Visual combat dice */
+.attack-roll-panel {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255, 200, 91, .22);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(88,58,7,.18), rgba(0,0,0,.22));
+}
+.attack-roll-heading, .combat-result-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.attack-roll-heading h4 { margin: 0; font-size: .96rem; }
+.profile-chip {
+  border: 1px solid rgba(255,200,91,.2);
+  border-radius: 999px;
+  padding: 6px 9px;
+  color: #ffd57c;
+  font-size: .68rem;
+  white-space: nowrap;
+}
+.dice-tray { display: flex; flex-wrap: wrap; gap: 9px; margin: 13px 0 10px; }
+.die {
+  width: 58px;
+  min-height: 62px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 3px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.13);
+  background: rgba(255,255,255,.045);
+  box-shadow: inset 0 1px rgba(255,255,255,.06), 0 6px 18px rgba(0,0,0,.18);
+}
+.die-face { font-size: 1.45rem; line-height: 1; font-weight: 950; }
+.die small { font-size: .56rem; font-weight: 850; text-transform: uppercase; letter-spacing: .04em; text-align: center; }
+.die.critical { color: #fff2bb; border-color: rgba(255,208,84,.65); background: linear-gradient(145deg, rgba(255,188,36,.28), rgba(114,65,0,.34)); box-shadow: 0 0 20px rgba(255,185,35,.16), inset 0 1px rgba(255,255,255,.16); }
+.die.hit { color: #c9ffe1; border-color: rgba(97,255,173,.55); background: linear-gradient(145deg, rgba(55,210,126,.24), rgba(4,76,39,.3)); }
+.die.miss { color: #83988c; opacity: .62; }
+.die.cover { color: #d9f4ff; border-color: rgba(125,211,252,.5); background: rgba(66,153,225,.18); }
+.roll-summary { display: flex; gap: 13px; flex-wrap: wrap; align-items: center; font-size: .78rem; color: var(--muted); }
+.crit-text { color: #ffd57c; }
+.hit-text { color: var(--green-bright); }
+.dice-note { margin: 9px 0 0; color: var(--muted); font-size: .72rem; }
+
+/* NPO combat controls and defeated watermark */
+.npo-card > *:not(.skull-watermark) { position: relative; z-index: 1; }
+.skull-watermark {
+  position: absolute;
+  z-index: 2;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%) rotate(-10deg);
+  color: rgba(255, 109, 115, .32);
+  font-size: 8rem;
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 0 18px rgba(255,70,80,.18));
+}
+.npo-card.incapacitated { opacity: .7; }
+.npo-card.incapacitated > *:not(.skull-watermark) { opacity: .34; }
+.npo-profile { color: var(--green-dim); font-size: .67rem; margin: 5px 0 10px; }
+.resolve-player-attack {
+  width: 100%;
+  min-height: 38px;
+  border: 1px solid rgba(255,200,91,.25);
+  border-radius: 9px;
+  background: rgba(255,190,68,.08);
+  color: #ffd57c;
+  cursor: pointer;
+  font-weight: 850;
+  font-size: .74rem;
+}
+.resolve-player-attack:hover { border-color: rgba(255,200,91,.55); background: rgba(255,190,68,.13); }
+.resolve-player-attack:disabled { cursor: not-allowed; opacity: .45; }
+
+/* Player attack resolver */
+.attack-modal { width: min(560px, calc(100% - 24px)); }
+.form-note { margin: -4px 0 0; color: var(--muted); font-size: .69rem; line-height: 1.4; }
+.target-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: rgba(97,255,173,.05);
+  color: var(--muted);
+  font-size: .76rem;
+}
+.target-status strong { color: var(--green-bright); }
+.compact-toggle { min-height: 40px; }
+.combat-result-preview {
+  min-height: 88px;
+  padding: 13px;
+  border: 1px solid rgba(112,255,178,.12);
+  border-radius: 11px;
+  background: rgba(0,0,0,.2);
+}
+.combat-result-preview p { margin: 0; }
+.damage-total { color: #ff9da1; font-size: 1.05rem; }
+.combat-breakdown { display: grid; gap: 5px; color: var(--muted); font-size: .73rem; }
+.wound-change {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: rgba(97,255,173,.06);
+}
+.wound-change strong { color: var(--green-bright); font-size: 1rem; }
+.wound-change span { color: var(--muted); font-size: .72rem; }
+.wound-change.killed { border-color: rgba(255,109,115,.35); background: rgba(255,109,115,.08); }
+.wound-change.killed strong, .wound-change.killed span { color: #ff9da1; }
+.button:disabled { cursor: not-allowed; opacity: .52; transform: none; }
+
+@media (max-width: 900px) {
+  .utility-tabs { grid-row: auto; }
+}
+
+@media (max-width: 620px) {
+  .tab-list { overflow-x: auto; grid-template-columns: repeat(3, minmax(105px, 1fr)); }
+  .tab-panel { padding: 15px; }
+  .attack-roll-heading, .combat-result-head, .target-status, .wound-change { flex-direction: column; }
+  .profile-chip { white-space: normal; }
+  .die { width: 52px; min-height: 58px; }
+  .attack-profile-grid { grid-template-columns: 1fr 1fr; }
+}

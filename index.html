@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07140f">
+  <meta name="description" content="A solo and co-op command console for Kill Team games set in a Necron tomb world.">
+  <title>Tomb World Solo Command</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient-grid" aria-hidden="true"></div>
+  <header class="hero shell">
+    <div class="brand-lockup">
+      <div class="scarab-mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" role="img">
+          <path d="M50 9 63 22 59 35 72 41 88 32 80 49 92 56 74 61 75 78 60 69 50 92 40 69 25 78 26 61 8 56 20 49 12 32 28 41 41 35 37 22Z"/>
+          <circle cx="50" cy="47" r="12"/>
+        </svg>
+      </div>
+      <div>
+        <p class="eyebrow">UNOFFICIAL SOLO PLAY AID</p>
+        <h1>Tomb World Solo Command</h1>
+        <p class="hero-copy">Run Necron non-player operatives, resolve activations, track threat, and manage narrative mission events from one screen.</p>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <button class="button ghost" id="resetCampaignBtn" type="button">Reset Session</button>
+      <button class="button secondary" id="exportBtn" type="button">Export Save</button>
+      <label class="button secondary file-button">Import Save<input id="importInput" type="file" accept="application/json"></label>
+    </div>
+  </header>
+
+  <main class="shell app-grid">
+    <section class="panel command-panel" aria-labelledby="commandHeading">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">ENEMY COMMAND CORE</p>
+          <h2 id="commandHeading">Activate Next Enemy</h2>
+        </div>
+        <div class="turn-chip">Turning Point <strong id="turnNumber">1</strong></div>
+      </div>
+
+      <div class="threat-strip">
+        <div class="threat-copy">
+          <span>Threat Level</span>
+          <strong id="threatValue">0</strong>
+          <small id="threatGrade">Grade 0</small>
+        </div>
+        <input id="threatSlider" type="range" min="0" max="15" value="0" aria-label="Threat level">
+        <div class="threat-buttons">
+          <button class="icon-button" id="threatDown" type="button" aria-label="Decrease threat">−</button>
+          <button class="icon-button" id="threatUp" type="button" aria-label="Increase threat">+</button>
+        </div>
+      </div>
+
+      <div class="snapshot-card">
+        <div class="snapshot-header">
+          <div>
+            <h3>Battlefield Snapshot</h3>
+            <p>Set these once as the situation changes. The activation button uses the current snapshot immediately.</p>
+          </div>
+          <button class="text-button" id="clearSnapshotBtn" type="button">Clear</button>
+        </div>
+        <div class="toggle-grid">
+          <label class="toggle"><input id="ctxEngaged" type="checkbox"><span>Enemy in control range</span></label>
+          <label class="toggle"><input id="ctxValidShot" type="checkbox" checked><span>Valid shooting target</span></label>
+          <label class="toggle"><input id="ctxCanCharge" type="checkbox" checked><span>Can complete a Charge</span></label>
+          <label class="toggle"><input id="ctxCanReachLos" type="checkbox" checked><span>Can move to line of sight</span></label>
+          <label class="toggle"><input id="ctxDoorBlocked" type="checkbox"><span>Closed hatch blocks route</span></label>
+          <label class="toggle"><input id="ctxTargetsClustered" type="checkbox"><span>Multiple targets clustered</span></label>
+          <label class="toggle"><input id="ctxMissionCritical" type="checkbox"><span>Player on mission objective</span></label>
+          <label class="toggle"><input id="ctxTargetWounded" type="checkbox"><span>A player operative is wounded</span></label>
+        </div>
+        <div class="distance-row">
+          <label for="ctxDistance">Closest player distance</label>
+          <select id="ctxDistance">
+            <option value="close">Within 6 inches</option>
+            <option value="medium" selected>6 to 12 inches</option>
+            <option value="far">More than 12 inches</option>
+          </select>
+          <label for="ctxCover">Best target protection</label>
+          <select id="ctxCover">
+            <option value="open">Open</option>
+            <option value="cover" selected>In cover</option>
+            <option value="obscured">Obscured</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="activate-button" id="activateBtn" type="button">
+        <span class="activate-icon">▶</span>
+        <span>
+          <small>ONE-CLICK AI DECISION</small>
+          Activate Next Enemy
+        </span>
+      </button>
+
+      <article class="activation-output" id="activationOutput" aria-live="polite">
+        <div class="activation-empty">
+          <div class="pulse-ring"></div>
+          <h3>Command core standing by</h3>
+          <p>The highest-priority ready NPO will be selected automatically.</p>
+        </div>
+      </article>
+
+      <div class="command-footer">
+        <button class="button secondary" id="strategyBtn" type="button">Resolve Strategy Phase</button>
+        <button class="button ghost" id="newTurnBtn" type="button">Start Next Turning Point</button>
+      </div>
+    </section>
+
+    <aside class="side-stack">
+      <section class="panel compact-panel" aria-labelledby="missionHeading">
+        <div class="panel-heading compact">
+          <div>
+            <p class="eyebrow">MISSION CONTROL</p>
+            <h2 id="missionHeading">Mission</h2>
+          </div>
+          <button class="icon-button" id="randomMissionBtn" type="button" title="Random mission" aria-label="Random mission">⚄</button>
+        </div>
+        <select id="missionSelect" class="full-select" aria-label="Mission selection"></select>
+        <div id="missionCard" class="mission-card"></div>
+      </section>
+
+      <section class="panel compact-panel" aria-labelledby="eventHeading">
+        <div class="panel-heading compact">
+          <div>
+            <p class="eyebrow">TOMB ANOMALIES</p>
+            <h2 id="eventHeading">Random Event</h2>
+          </div>
+          <span class="status-dot" aria-hidden="true"></span>
+        </div>
+        <div id="eventCard" class="event-card">
+          <p class="muted">No event has been resolved this turning point.</p>
+        </div>
+        <button class="button secondary full" id="eventBtn" type="button">Draw Random Event</button>
+      </section>
+
+      <section class="panel compact-panel" aria-labelledby="logHeading">
+        <div class="panel-heading compact">
+          <div>
+            <p class="eyebrow">BATTLE RECORD</p>
+            <h2 id="logHeading">Activity Log</h2>
+          </div>
+          <button class="text-button" id="clearLogBtn" type="button">Clear</button>
+        </div>
+        <ol id="activityLog" class="activity-log"></ol>
+      </section>
+    </aside>
+
+    <section class="panel roster-panel" aria-labelledby="rosterHeading">
+      <div class="panel-heading roster-heading">
+        <div>
+          <p class="eyebrow">NON-PLAYER OPERATIVES</p>
+          <h2 id="rosterHeading">Enemy Roster</h2>
+          <p class="section-copy">The app starts with Tomb World Necrons. Add, edit, wound, ready, or remove operatives at any time.</p>
+        </div>
+        <div class="roster-actions">
+          <button class="button ghost" id="generateRosterBtn" type="button">Generate Necron Roster</button>
+          <button class="button secondary" id="addNpoBtn" type="button">Add NPO</button>
+        </div>
+      </div>
+      <div class="roster-summary" id="rosterSummary"></div>
+      <div id="rosterGrid" class="roster-grid"></div>
+    </section>
+
+    <section class="panel reference-panel" aria-labelledby="referenceHeading">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">AI REFERENCE</p>
+          <h2 id="referenceHeading">Decision Logic</h2>
+        </div>
+      </div>
+      <div class="logic-grid">
+        <article>
+          <span class="logic-number">01</span>
+          <h3>Select the threat</h3>
+          <p>Prioritize an NPO that can attack, interfere with the mission, exploit an exposed operative, or reach the closest player.</p>
+        </article>
+        <article>
+          <span class="logic-number">02</span>
+          <h3>Follow behavior</h3>
+          <p>Brawlers close and fight. Marksmen seek clear shots. Sentinels fight nearby threats, then bring ranged weapons to bear.</p>
+        </article>
+        <article>
+          <span class="logic-number">03</span>
+          <h3>Break ties against the player</h3>
+          <p>Choose the result most likely to incapacitate a player operative or prevent mission success. Randomize only true ties.</p>
+        </article>
+        <article>
+          <span class="logic-number">04</span>
+          <h3>Resolve on the tabletop</h3>
+          <p>The app provides order, movement, target, profile, and action sequence. Roll attacks and apply Kill Team rules normally.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="npoDialog" class="modal">
+    <form id="npoForm" method="dialog">
+      <div class="modal-heading">
+        <div>
+          <p class="eyebrow">ROSTER EDITOR</p>
+          <h2 id="dialogTitle">Add NPO</h2>
+        </div>
+        <button class="icon-button" value="cancel" formmethod="dialog" aria-label="Close">×</button>
+      </div>
+      <input id="editNpoId" type="hidden">
+      <label>Name<input id="npoName" required maxlength="40" placeholder="Necron Warrior 5"></label>
+      <label>Type
+        <select id="npoType">
+          <option>Necron Warrior</option>
+          <option>Canoptek Scarab Swarm</option>
+          <option>Canoptek Macrocyte</option>
+          <option>Canoptek Tomb Crawler</option>
+          <option>Custom NPO</option>
+        </select>
+      </label>
+      <label>Behavior
+        <select id="npoBehavior">
+          <option value="marksman">Marksman</option>
+          <option value="brawler">Brawler</option>
+          <option value="sentinel">Sentinel</option>
+          <option value="guardian">Objective Guardian</option>
+        </select>
+      </label>
+      <div class="form-split">
+        <label>Maximum wounds<input id="npoMaxWounds" type="number" min="1" max="99" value="9" required></label>
+        <label>Current wounds<input id="npoWounds" type="number" min="0" max="99" value="9" required></label>
+      </div>
+      <label>Weapon or role note<input id="npoWeapon" maxlength="80" placeholder="Gauss reaper"></label>
+      <div class="modal-actions">
+        <button class="button ghost" value="cancel" formmethod="dialog">Cancel</button>
+        <button class="button primary" id="saveNpoBtn" value="default">Save NPO</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer class="shell footer">
+    <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
+    <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" target="_blank" rel="noreferrer">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" target="_blank" rel="noreferrer">Official Tomb World mission pack</a></p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

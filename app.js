@@ -317,8 +317,8 @@
     els.npoType.addEventListener("change", applyTemplateToDialog);
     els.npoForm.addEventListener("submit", saveNpoFromDialog);
     els.attackForm.addEventListener("submit", resolvePlayerAttack);
-    document.querySelectorAll("[data-tab]").forEach(button => {
-      button.addEventListener("click", () => activateUtilityTab(button.dataset.tab));
+    document.querySelectorAll("[data-workspace-tab]").forEach(button => {
+      button.addEventListener("click", () => activateWorkspaceTab(button.dataset.workspaceTab));
     });
 
     const snapshotMap = {
@@ -343,17 +343,20 @@
     });
   }
 
-  function activateUtilityTab(panelId) {
-    document.querySelectorAll("[data-tab]").forEach(button => {
-      const active = button.dataset.tab === panelId;
+  function activateWorkspaceTab(panelId) {
+    document.querySelectorAll("[data-workspace-tab]").forEach(button => {
+      const active = button.dataset.workspaceTab === panelId;
       button.classList.toggle("active", active);
       button.setAttribute("aria-selected", String(active));
+      if (active) button.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     });
-    document.querySelectorAll(".tab-panel").forEach(panel => {
+    document.querySelectorAll(".workspace-panel").forEach(panel => {
       const active = panel.id === panelId;
       panel.classList.toggle("active", active);
       panel.hidden = !active;
     });
+    const tabs = document.querySelector(".workspace-tabs");
+    if (tabs) window.scrollTo({ top: Math.max(0, tabs.offsetTop - 8), behavior: "smooth" });
   }
 
   function populateMissionSelect() {

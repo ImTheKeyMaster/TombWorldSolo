@@ -4,6 +4,9 @@ A visual, static web app for running solo or cooperative Kill Team battles again
 
 ## Features
 
+- App-wide mobile-friendly tabs for Command, Roster, Mission, Anomalies, Battle Record, Instructions, and Decision Logic
+- Built-in Instructions tab covering setup, activation, visual dice, player attacks, wounds, events, and saves
+
 - A visible, locked **Next to Activate** NPO preview before you complete the Battlefield Snapshot
 - One-click **Activate Next Enemy** decision engine with visual attack dice, highlighted critical hits, normal hits, and misses
 - Editable NPO roster with type, behavior, wounds, weapon note, ready state, and damage tracking

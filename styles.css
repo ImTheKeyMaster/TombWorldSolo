@@ -613,3 +613,57 @@ select, input[type="text"], input[type="number"], input:not([type]) {
   .next-enemy-card { grid-template-columns: auto minmax(0, 1fr); }
   .next-enemy-lock { grid-column: 2; justify-self: start; }
 }
+
+/* App-wide workspace tabs */
+.workspace-shell { display: grid; gap: 16px; align-items: start; }
+.workspace-tabs { position: sticky; top: 8px; z-index: 30; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 7px; padding: 8px; overflow: visible; background: rgba(5,16,11,.96); backdrop-filter: blur(14px); }
+.workspace-tab { min-width: 0; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 8px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--muted); cursor: pointer; font-size: .76rem; font-weight: 850; white-space: nowrap; }
+.workspace-tab:hover { color: var(--green-bright); border-color: var(--line); }
+.workspace-tab.active { color: #03130a; border-color: rgba(144,255,197,.5); background: linear-gradient(135deg,#33da83,#8dffc1); box-shadow: 0 7px 20px rgba(44,234,130,.12); }
+.tab-icon { font-size: .92rem; line-height: 1; }
+.workspace-panel[hidden] { display: none; }
+.workspace-panel.active { display: block; animation: workspace-in 150ms ease-out; }
+@keyframes workspace-in { from { opacity: .55; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+.focused-tool-panel, .instructions-panel, .logic-panel { padding: 24px; }
+.focused-tool-panel { width: min(880px,100%); margin: 0 auto; }
+.expanded-log { max-height: min(68vh,720px); }
+
+/* Instructions */
+.instruction-badge { padding: 7px 10px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--green-bright); background: rgba(97,255,173,.06); font-size: .65rem; font-weight: 900; letter-spacing: .12em; }
+.instruction-callout { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center; margin-bottom: 16px; padding: 14px 16px; border: 1px solid rgba(255,200,91,.25); border-radius: 13px; background: linear-gradient(135deg,rgba(255,190,68,.1),rgba(97,255,173,.045)); }
+.instruction-callout strong { color: #ffd57c; }
+.instruction-callout span { color: var(--muted); font-size: .84rem; line-height: 1.5; }
+.instruction-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; }
+.instruction-card { padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: rgba(0,0,0,.16); }
+.instruction-card h3 { margin: 11px 0 8px; }
+.instruction-card p { margin: 0; color: var(--muted); font-size: .8rem; line-height: 1.55; }
+.instruction-card p strong { color: var(--green-bright); }
+.dice-key { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.key-chip { padding: 5px 8px; border-radius: 999px; font-size: .65rem; font-weight: 850; border: 1px solid; }
+.critical-key { color: #fff2bb; border-color: rgba(255,208,84,.5); background: rgba(255,188,36,.17); }
+.hit-key { color: #c9ffe1; border-color: rgba(97,255,173,.45); background: rgba(55,210,126,.14); }
+.miss-key { color: #83988c; border-color: rgba(131,152,140,.28); background: rgba(255,255,255,.03); }
+.instruction-notes { margin-top: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 13px; background: rgba(97,255,173,.035); }
+.instruction-notes h3 { margin-bottom: 9px; }
+.instruction-notes ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: .8rem; line-height: 1.6; }
+
+@media (max-width: 1180px) {
+  .workspace-tabs { grid-template-columns: repeat(7,minmax(118px,1fr)); overflow-x: auto; }
+  .instruction-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 620px) {
+  .hero { padding-top: 22px; }
+  .hero-copy { display: none; }
+  .hero-actions { width: 100%; }
+  .hero-actions .button, .hero-actions .file-button { flex: 1 1 auto; text-align: center; }
+  .workspace-shell { gap: 11px; }
+  .workspace-tabs { top: 0; width: calc(100% + 22px); margin-left: -11px; grid-template-columns: repeat(7,minmax(92px,1fr)); gap: 4px; padding: 7px 11px; border-radius: 0 0 14px 14px; }
+  .workspace-tab { min-height: 44px; flex-direction: column; gap: 3px; padding: 6px; font-size: .64rem; }
+  .tab-icon { font-size: .8rem; }
+  .focused-tool-panel, .instructions-panel, .logic-panel { padding: 17px; }
+  .toggle-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .toggle { min-height: 58px; align-items: flex-start; }
+  .instruction-grid { grid-template-columns: 1fr; }
+  .instruction-callout { grid-template-columns: 1fr; gap: 5px; }
+  .instruction-badge { display: none; }
+}

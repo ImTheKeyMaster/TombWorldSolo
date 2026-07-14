@@ -1,303 +1,290 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07140f">
-  <meta name="description" content="A solo and co-op command console for Kill Team games set in a Necron tomb world.">
-  <title>Tomb World Solo Command</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#07140f" name="theme-color"/>
+<meta content="A solo and co-op command console for Kill Team games set in a Necron tomb world." name="description"/>
+<title>Tomb World Solo Command</title>
+<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
+<link href="manifest.webmanifest" rel="manifest"/>
+<link href="styles.css" rel="stylesheet"/>
 </head>
 <body>
-  <div class="ambient-grid" aria-hidden="true"></div>
-  <header class="hero shell">
-    <div class="brand-lockup">
-      <div class="scarab-mark" aria-hidden="true">
-        <svg viewBox="0 0 100 100" role="img">
-          <path d="M50 9 63 22 59 35 72 41 88 32 80 49 92 56 74 61 75 78 60 69 50 92 40 69 25 78 26 61 8 56 20 49 12 32 28 41 41 35 37 22Z"/>
-          <circle cx="50" cy="47" r="12"/>
-        </svg>
-      </div>
-      <div>
-        <p class="eyebrow">UNOFFICIAL SOLO PLAY AID</p>
-        <h1>Tomb World Solo Command</h1>
-        <p class="hero-copy">Run Necron non-player operatives, resolve activations, track threat, and manage narrative mission events from one screen.</p>
-      </div>
-    </div>
-    <div class="hero-actions">
-      <button class="button ghost" id="resetCampaignBtn" type="button">Reset Session</button>
-      <button class="button secondary" id="exportBtn" type="button">Export Save</button>
-      <label class="button secondary file-button">Import Save<input id="importInput" type="file" accept="application/json"></label>
-    </div>
-  </header>
-
-  <main class="shell app-grid">
-    <section class="panel command-panel" aria-labelledby="commandHeading">
-      <div class="panel-heading">
-        <div>
-          <p class="eyebrow">ENEMY COMMAND CORE</p>
-          <h2 id="commandHeading">Activate Next Enemy</h2>
-        </div>
-        <div class="turn-chip">Turning Point <strong id="turnNumber">1</strong></div>
-      </div>
-
-      <div class="threat-strip">
-        <div class="threat-copy">
-          <span>Threat Level</span>
-          <strong id="threatValue">0</strong>
-          <small id="threatGrade">Grade 0</small>
-        </div>
-        <input id="threatSlider" type="range" min="0" max="15" value="0" aria-label="Threat level">
-        <div class="threat-buttons">
-          <button class="icon-button" id="threatDown" type="button" aria-label="Decrease threat">−</button>
-          <button class="icon-button" id="threatUp" type="button" aria-label="Increase threat">+</button>
-        </div>
-      </div>
-
-      <section class="next-enemy-card" id="nextEnemyCard" aria-live="polite"></section>
-
-      <div class="snapshot-card">
-        <div class="snapshot-header">
-          <div>
-            <h3>Battlefield Snapshot</h3>
-            <p>Set these once as the situation changes. The activation button uses the current snapshot immediately.</p>
-          </div>
-          <button class="text-button" id="clearSnapshotBtn" type="button">Clear</button>
-        </div>
-        <div class="toggle-grid">
-          <label class="toggle"><input id="ctxEngaged" type="checkbox"><span>Enemy in control range</span></label>
-          <label class="toggle"><input id="ctxValidShot" type="checkbox" checked><span>Valid shooting target</span></label>
-          <label class="toggle"><input id="ctxCanCharge" type="checkbox" checked><span>Can complete a Charge</span></label>
-          <label class="toggle"><input id="ctxCanReachLos" type="checkbox" checked><span>Can move to line of sight</span></label>
-          <label class="toggle"><input id="ctxDoorBlocked" type="checkbox"><span>Closed hatch blocks route</span></label>
-          <label class="toggle"><input id="ctxTargetsClustered" type="checkbox"><span>Multiple targets clustered</span></label>
-          <label class="toggle"><input id="ctxMissionCritical" type="checkbox"><span>Player on mission objective</span></label>
-          <label class="toggle"><input id="ctxTargetWounded" type="checkbox"><span>A player operative is wounded</span></label>
-        </div>
-        <div class="distance-row">
-          <label for="ctxDistance">Closest player distance</label>
-          <select id="ctxDistance">
-            <option value="close">Within 6 inches</option>
-            <option value="medium" selected>6 to 12 inches</option>
-            <option value="far">More than 12 inches</option>
-          </select>
-          <label for="ctxCover">Best target protection</label>
-          <select id="ctxCover">
-            <option value="open">Open</option>
-            <option value="cover" selected>In cover</option>
-            <option value="obscured">Obscured</option>
-          </select>
-        </div>
-      </div>
-
-      <button class="activate-button" id="activateBtn" type="button">
-        <span class="activate-icon">▶</span>
-        <span>
-          <small>ONE-CLICK AI DECISION</small>
+<div aria-hidden="true" class="ambient-grid"></div>
+<header class="hero shell">
+<div class="brand-lockup">
+<div aria-hidden="true" class="scarab-mark">
+<svg role="img" viewbox="0 0 100 100">
+<path d="M50 9 63 22 59 35 72 41 88 32 80 49 92 56 74 61 75 78 60 69 50 92 40 69 25 78 26 61 8 56 20 49 12 32 28 41 41 35 37 22Z"></path>
+<circle cx="50" cy="47" r="12"></circle>
+</svg>
+</div>
+<div>
+<p class="eyebrow">UNOFFICIAL SOLO PLAY AID</p>
+<h1>Tomb World Solo Command</h1>
+<p class="hero-copy">Run Necron non-player operatives, resolve activations, track threat, and manage narrative mission events through focused battle tabs.</p>
+</div>
+</div>
+<div class="hero-actions">
+<button class="button ghost" id="resetCampaignBtn" type="button">Reset Session</button>
+<button class="button secondary" id="exportBtn" type="button">Export Save</button>
+<label class="button secondary file-button">Import Save<input accept="application/json" id="importInput" type="file"/></label>
+</div>
+</header>
+<main class="shell workspace-shell"><nav aria-label="Tomb World Solo Command sections" class="workspace-tabs panel" role="tablist">
+<button aria-controls="commandWorkspace" aria-selected="true" class="workspace-tab active" data-workspace-tab="commandWorkspace" id="commandTab" role="tab" type="button"><span class="tab-icon">▶</span><span>Command</span></button>
+<button aria-controls="rosterWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="rosterWorkspace" id="rosterTab" role="tab" type="button"><span class="tab-icon">◉</span><span>Roster</span></button>
+<button aria-controls="missionWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="missionWorkspace" id="missionTab" role="tab" type="button"><span class="tab-icon">◆</span><span>Mission</span></button>
+<button aria-controls="eventWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="eventWorkspace" id="eventTab" role="tab" type="button"><span class="tab-icon">⚡</span><span>Anomalies</span></button>
+<button aria-controls="logWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="logWorkspace" id="logTab" role="tab" type="button"><span class="tab-icon">≡</span><span>Battle Record</span></button>
+<button aria-controls="instructionsWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="instructionsWorkspace" id="instructionsTab" role="tab" type="button"><span class="tab-icon">?</span><span>Instructions</span></button>
+<button aria-controls="logicWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="logicWorkspace" id="logicTab" role="tab" type="button"><span class="tab-icon">⌘</span><span>Decision Logic</span></button>
+</nav><section aria-labelledby="commandTab" class="panel workspace-panel command-panel active" id="commandWorkspace" role="tabpanel">
+<div class="panel-heading">
+<div>
+<p class="eyebrow">ENEMY COMMAND CORE</p>
+<h2 id="commandHeading">Activate Next Enemy</h2>
+</div>
+<div class="turn-chip">Turning Point <strong id="turnNumber">1</strong></div>
+</div>
+<div class="threat-strip">
+<div class="threat-copy">
+<span>Threat Level</span>
+<strong id="threatValue">0</strong>
+<small id="threatGrade">Grade 0</small>
+</div>
+<input aria-label="Threat level" id="threatSlider" max="15" min="0" type="range" value="0"/>
+<div class="threat-buttons">
+<button aria-label="Decrease threat" class="icon-button" id="threatDown" type="button">−</button>
+<button aria-label="Increase threat" class="icon-button" id="threatUp" type="button">+</button>
+</div>
+</div>
+<section aria-live="polite" class="next-enemy-card" id="nextEnemyCard"></section>
+<div class="snapshot-card">
+<div class="snapshot-header">
+<div>
+<h3>Battlefield Snapshot</h3>
+<p>Set these once as the situation changes. The activation button uses the current snapshot immediately.</p>
+</div>
+<button class="text-button" id="clearSnapshotBtn" type="button">Clear</button>
+</div>
+<div class="toggle-grid">
+<label class="toggle"><input id="ctxEngaged" type="checkbox"/><span>Enemy in control range</span></label>
+<label class="toggle"><input checked="" id="ctxValidShot" type="checkbox"/><span>Valid shooting target</span></label>
+<label class="toggle"><input checked="" id="ctxCanCharge" type="checkbox"/><span>Can complete a Charge</span></label>
+<label class="toggle"><input checked="" id="ctxCanReachLos" type="checkbox"/><span>Can move to line of sight</span></label>
+<label class="toggle"><input id="ctxDoorBlocked" type="checkbox"/><span>Closed hatch blocks route</span></label>
+<label class="toggle"><input id="ctxTargetsClustered" type="checkbox"/><span>Multiple targets clustered</span></label>
+<label class="toggle"><input id="ctxMissionCritical" type="checkbox"/><span>Player on mission objective</span></label>
+<label class="toggle"><input id="ctxTargetWounded" type="checkbox"/><span>A player operative is wounded</span></label>
+</div>
+<div class="distance-row">
+<label for="ctxDistance">Closest player distance</label>
+<select id="ctxDistance">
+<option value="close">Within 6 inches</option>
+<option selected="" value="medium">6 to 12 inches</option>
+<option value="far">More than 12 inches</option>
+</select>
+<label for="ctxCover">Best target protection</label>
+<select id="ctxCover">
+<option value="open">Open</option>
+<option selected="" value="cover">In cover</option>
+<option value="obscured">Obscured</option>
+</select>
+</div>
+</div>
+<button class="activate-button" id="activateBtn" type="button">
+<span class="activate-icon">▶</span>
+<span>
+<small>ONE-CLICK AI DECISION</small>
           Activate Next Enemy
         </span>
-      </button>
-
-      <article class="activation-output" id="activationOutput" aria-live="polite">
-        <div class="activation-empty">
-          <div class="pulse-ring"></div>
-          <h3>Command core standing by</h3>
-          <p>The operative shown above is locked as the next NPO to activate.</p>
-        </div>
-      </article>
-
-      <div class="command-footer">
-        <button class="button secondary" id="strategyBtn" type="button">Resolve Strategy Phase</button>
-        <button class="button ghost" id="newTurnBtn" type="button">Start Next Turning Point</button>
-      </div>
-    </section>
-
-    <aside class="panel utility-tabs" aria-label="Mission, anomaly, battle record, and decision logic tools">
-      <div class="tab-list" role="tablist" aria-label="Battle tools">
-        <button class="tab-button active" id="missionTab" type="button" role="tab" aria-selected="true" aria-controls="missionPanel" data-tab="missionPanel">Mission</button>
-        <button class="tab-button" id="eventTab" type="button" role="tab" aria-selected="false" aria-controls="eventPanel" data-tab="eventPanel">Anomalies</button>
-        <button class="tab-button" id="logTab" type="button" role="tab" aria-selected="false" aria-controls="logPanel" data-tab="logPanel">Battle Record</button>
-        <button class="tab-button" id="logicTab" type="button" role="tab" aria-selected="false" aria-controls="logicPanel" data-tab="logicPanel">Decision Logic</button>
-      </div>
-
-      <section class="tab-panel active" id="missionPanel" role="tabpanel" aria-labelledby="missionTab">
-        <div class="panel-heading compact">
-          <div>
-            <p class="eyebrow">MISSION CONTROL</p>
-            <h2 id="missionHeading">Mission</h2>
-          </div>
-          <button class="icon-button" id="randomMissionBtn" type="button" title="Random mission" aria-label="Random mission">⚄</button>
-        </div>
-        <select id="missionSelect" class="full-select" aria-label="Mission selection"></select>
-        <div id="missionCard" class="mission-card"></div>
-      </section>
-
-      <section class="tab-panel" id="eventPanel" role="tabpanel" aria-labelledby="eventTab" hidden>
-        <div class="panel-heading compact">
-          <div>
-            <p class="eyebrow">TOMB ANOMALIES</p>
-            <h2 id="eventHeading">Random Event</h2>
-          </div>
-          <span class="status-dot" aria-hidden="true"></span>
-        </div>
-        <div id="eventCard" class="event-card">
-          <p class="muted">No event has been resolved this turning point.</p>
-        </div>
-        <button class="button secondary full" id="eventBtn" type="button">Draw Random Event</button>
-      </section>
-
-      <section class="tab-panel" id="logPanel" role="tabpanel" aria-labelledby="logTab" hidden>
-        <div class="panel-heading compact">
-          <div>
-            <p class="eyebrow">BATTLE RECORD</p>
-            <h2 id="logHeading">Activity Log</h2>
-          </div>
-          <button class="text-button" id="clearLogBtn" type="button">Clear</button>
-        </div>
-        <ol id="activityLog" class="activity-log"></ol>
-      </section>
-
-      <section class="tab-panel" id="logicPanel" role="tabpanel" aria-labelledby="logicTab" hidden>
-        <div class="panel-heading compact">
-          <div>
-            <p class="eyebrow">AI REFERENCE</p>
-            <h2>Decision Logic</h2>
-          </div>
-        </div>
-        <div class="logic-grid">
-          <article>
-            <span class="logic-number">01</span>
-            <h3>Queue the operative</h3>
-            <p>The next ready NPO is selected and locked before you complete the Battlefield Snapshot, so the context always applies to the operative shown.</p>
-          </article>
-          <article>
-            <span class="logic-number">02</span>
-            <h3>Follow behavior</h3>
-            <p>Brawlers close and fight. Marksmen seek clear shots. Sentinels fight nearby threats, then bring ranged weapons to bear.</p>
-          </article>
-          <article>
-            <span class="logic-number">03</span>
-            <h3>Break ties against the player</h3>
-            <p>Choose the result most likely to incapacitate a player operative or prevent mission success. Randomize only true ties.</p>
-          </article>
-          <article>
-            <span class="logic-number">04</span>
-            <h3>Resolve on the tabletop</h3>
-            <p>The app provides order, movement, target, action sequence, and a visual attack roll. Apply defence and special rules from the datacards you are using.</p>
-          </article>
-        </div>
-      </section>
-    </aside>
-
-    <section class="panel roster-panel" aria-labelledby="rosterHeading">
-      <div class="panel-heading roster-heading">
-        <div>
-          <p class="eyebrow">NON-PLAYER OPERATIVES</p>
-          <h2 id="rosterHeading">Enemy Roster</h2>
-          <p class="section-copy">The app starts with Tomb World Necrons. Add, edit, wound, ready, or remove operatives at any time.</p>
-        </div>
-        <div class="roster-actions">
-          <button class="button ghost" id="generateRosterBtn" type="button">Generate Necron Roster</button>
-          <button class="button secondary" id="addNpoBtn" type="button">Add NPO</button>
-        </div>
-      </div>
-      <div class="roster-summary" id="rosterSummary"></div>
-      <div id="rosterGrid" class="roster-grid"></div>
-    </section>
-
-
-  </main>
-
-  <dialog id="npoDialog" class="modal">
-    <form id="npoForm" method="dialog">
-      <div class="modal-heading">
-        <div>
-          <p class="eyebrow">ROSTER EDITOR</p>
-          <h2 id="dialogTitle">Add NPO</h2>
-        </div>
-        <button class="icon-button" value="cancel" formmethod="dialog" aria-label="Close">×</button>
-      </div>
-      <input id="editNpoId" type="hidden">
-      <label>Name<input id="npoName" required maxlength="40" placeholder="Necron Warrior 5"></label>
-      <label>Type
+</button>
+<article aria-live="polite" class="activation-output" id="activationOutput">
+<div class="activation-empty">
+<div class="pulse-ring"></div>
+<h3>Command core standing by</h3>
+<p>The operative shown above is locked as the next NPO to activate.</p>
+</div>
+</article>
+<div class="command-footer">
+<button class="button secondary" id="strategyBtn" type="button">Resolve Strategy Phase</button>
+<button class="button ghost" id="newTurnBtn" type="button">Start Next Turning Point</button>
+</div>
+</section><section aria-labelledby="rosterTab" class="panel workspace-panel roster-panel" hidden="" id="rosterWorkspace" role="tabpanel">
+<div class="panel-heading roster-heading">
+<div>
+<p class="eyebrow">NON-PLAYER OPERATIVES</p>
+<h2 id="rosterHeading">Enemy Roster</h2>
+<p class="section-copy">The app starts with Tomb World Necrons. Add, edit, wound, ready, or remove operatives at any time.</p>
+</div>
+<div class="roster-actions">
+<button class="button ghost" id="generateRosterBtn" type="button">Generate Necron Roster</button>
+<button class="button secondary" id="addNpoBtn" type="button">Add NPO</button>
+</div>
+</div>
+<div class="roster-summary" id="rosterSummary"></div>
+<div class="roster-grid" id="rosterGrid"></div>
+</section><section aria-labelledby="missionTab" class="panel workspace-panel focused-tool-panel" hidden="" id="missionWorkspace" role="tabpanel">
+<div class="panel-heading compact">
+<div>
+<p class="eyebrow">MISSION CONTROL</p>
+<h2 id="missionHeading">Mission</h2>
+</div>
+<button aria-label="Random mission" class="icon-button" id="randomMissionBtn" title="Random mission" type="button">⚄</button>
+</div>
+<select aria-label="Mission selection" class="full-select" id="missionSelect"></select>
+<div class="mission-card" id="missionCard"></div>
+</section><section aria-labelledby="eventTab" class="panel workspace-panel focused-tool-panel" hidden="" id="eventWorkspace" role="tabpanel">
+<div class="panel-heading compact">
+<div>
+<p class="eyebrow">TOMB ANOMALIES</p>
+<h2 id="eventHeading">Random Event</h2>
+</div>
+<span aria-hidden="true" class="status-dot"></span>
+</div>
+<div class="event-card" id="eventCard">
+<p class="muted">No event has been resolved this turning point.</p>
+</div>
+<button class="button secondary full" id="eventBtn" type="button">Draw Random Event</button>
+</section><section aria-labelledby="logTab" class="panel workspace-panel focused-tool-panel" hidden="" id="logWorkspace" role="tabpanel">
+<div class="panel-heading compact">
+<div>
+<p class="eyebrow">BATTLE RECORD</p>
+<h2 id="logHeading">Activity Log</h2>
+</div>
+<button class="text-button" id="clearLogBtn" type="button">Clear</button>
+</div>
+<ol class="activity-log expanded-log" id="activityLog"></ol>
+</section><section aria-labelledby="instructionsTab" class="panel workspace-panel instructions-panel" hidden="" id="instructionsWorkspace" role="tabpanel">
+<div class="panel-heading"><div><p class="eyebrow">FIELD MANUAL</p><h2>How to Use the App</h2></div><span class="instruction-badge">QUICK START</span></div>
+<div class="instruction-callout"><strong>Normal turn flow</strong><span>Command → set the snapshot → activate the queued enemy → resolve the result → repeat. Use Roster whenever a player operative attacks an NPO.</span></div>
+<div class="instruction-grid">
+<article class="instruction-card"><span class="logic-number">01</span><h3>Choose the mission and roster</h3><p>Open <strong>Mission</strong> to select a scenario and track progress. Open <strong>Roster</strong> to use the default Necrons, generate a force, or edit behavior, wounds, save, and attack profile.</p></article>
+<article class="instruction-card"><span class="logic-number">02</span><h3>Review the queued enemy</h3><p>The <strong>Command</strong> tab identifies the next NPO before activation. Its roster card also carries a NEXT marker. The selection stays locked while you complete the snapshot.</p></article>
+<article class="instruction-card"><span class="logic-number">03</span><h3>Set the Battlefield Snapshot</h3><p>Enter range, line of sight, charge availability, cover, objectives, and nearby targets for the displayed NPO. These choices feed its behavior decision tree.</p></article>
+<article class="instruction-card"><span class="logic-number">04</span><h3>Activate the enemy</h3><p>Press <strong>Activate Next Enemy</strong>. Follow the order, movement, target priority, action sequence, and visual attack roll shown by the app.</p></article>
+<article class="instruction-card"><span class="logic-number">05</span><h3>Read the dice</h3><p>Dice use normal pip faces. Gold is a critical hit or save, green is a normal hit or save, and dim gray is a miss.</p><div class="dice-key"><span class="key-chip critical-key">Critical</span><span class="key-chip hit-key">Hit / Save</span><span class="key-chip miss-key">Miss</span></div></article>
+<article class="instruction-card"><span class="logic-number">06</span><h3>Resolve a player attack</h3><p>Open <strong>Roster</strong> and select <strong>Resolve Player Attack</strong> on the target. Enter retained hits, damage, Defence dice, AP, and cover. The app rolls saves and updates wounds.</p></article>
+<article class="instruction-card"><span class="logic-number">07</span><h3>Advance the battle</h3><p>Use <strong>Anomalies</strong> for random events, <strong>Battle Record</strong> for the log, and <strong>Start Next Turning Point</strong> to ready survivors and advance the turn.</p></article>
+<article class="instruction-card"><span class="logic-number">08</span><h3>Save the session</h3><p>The browser saves automatically. Use <strong>Export Save</strong> for a JSON backup and <strong>Import Save</strong> to restore it elsewhere.</p></article>
+</div>
+<div class="instruction-notes"><h3>Important tabletop notes</h3><ul><li>This is a decision and tracking aid. Use current datacards and official rules for visibility, cover, weapon rules, combat sequencing, and mission maps.</li><li>An NPO at 0 wounds is dimmed, marked with a skull, and removed from the activation queue.</li><li>Open <strong>Decision Logic</strong> for the AI principles and tie-break guidance.</li></ul></div>
+</section><section aria-labelledby="logicTab" class="panel workspace-panel logic-panel" hidden="" id="logicWorkspace" role="tabpanel">
+<div class="panel-heading compact">
+<div>
+<p class="eyebrow">AI REFERENCE</p>
+<h2>Decision Logic</h2>
+</div>
+</div>
+<div class="logic-grid">
+<article>
+<span class="logic-number">01</span>
+<h3>Queue the operative</h3>
+<p>The next ready NPO is selected and locked before you complete the Battlefield Snapshot, so the context always applies to the operative shown.</p>
+</article>
+<article>
+<span class="logic-number">02</span>
+<h3>Follow behavior</h3>
+<p>Brawlers close and fight. Marksmen seek clear shots. Sentinels fight nearby threats, then bring ranged weapons to bear.</p>
+</article>
+<article>
+<span class="logic-number">03</span>
+<h3>Break ties against the player</h3>
+<p>Choose the result most likely to incapacitate a player operative or prevent mission success. Randomize only true ties.</p>
+</article>
+<article>
+<span class="logic-number">04</span>
+<h3>Resolve on the tabletop</h3>
+<p>The app provides order, movement, target, action sequence, and a visual attack roll. Apply defence and special rules from the datacards you are using.</p>
+</article>
+</div>
+</section></main>
+<dialog class="modal" id="npoDialog">
+<form id="npoForm" method="dialog">
+<div class="modal-heading">
+<div>
+<p class="eyebrow">ROSTER EDITOR</p>
+<h2 id="dialogTitle">Add NPO</h2>
+</div>
+<button aria-label="Close" class="icon-button" formmethod="dialog" value="cancel">×</button>
+</div>
+<input id="editNpoId" type="hidden"/>
+<label>Name<input id="npoName" maxlength="40" placeholder="Necron Warrior 5" required=""/></label>
+<label>Type
         <select id="npoType">
-          <option>Necron Warrior</option>
-          <option>Canoptek Scarab Swarm</option>
-          <option>Canoptek Macrocyte</option>
-          <option>Canoptek Tomb Crawler</option>
-          <option>Custom NPO</option>
-        </select>
-      </label>
-      <label>Behavior
+<option>Necron Warrior</option>
+<option>Canoptek Scarab Swarm</option>
+<option>Canoptek Macrocyte</option>
+<option>Canoptek Tomb Crawler</option>
+<option>Custom NPO</option>
+</select>
+</label>
+<label>Behavior
         <select id="npoBehavior">
-          <option value="marksman">Marksman</option>
-          <option value="brawler">Brawler</option>
-          <option value="sentinel">Sentinel</option>
-          <option value="guardian">Objective Guardian</option>
-        </select>
-      </label>
-      <div class="form-split">
-        <label>Maximum wounds<input id="npoMaxWounds" type="number" min="1" max="99" value="9" required></label>
-        <label>Current wounds<input id="npoWounds" type="number" min="0" max="99" value="9" required></label>
-      </div>
-      <label>Weapon or role note<input id="npoWeapon" maxlength="80" placeholder="Gauss reaper"></label>
-      <div class="form-split attack-profile-grid">
-        <label>Attack dice<input id="npoAttackDice" type="number" min="1" max="12" value="4" required></label>
-        <label>Hit on<input id="npoHit" type="number" min="2" max="6" value="4" required></label>
-        <label>Normal damage<input id="npoNormalDamage" type="number" min="1" max="12" value="3" required></label>
-        <label>Critical damage<input id="npoCritDamage" type="number" min="1" max="12" value="4" required></label>
-      </div>
-      <p class="form-note">Attack values power the visual dice roller. Adjust them to match the datacard or profile you are using.</p>
-      <div class="modal-actions">
-        <button class="button ghost" value="cancel" formmethod="dialog">Cancel</button>
-        <button class="button primary" id="saveNpoBtn" value="default">Save NPO</button>
-      </div>
-    </form>
-  </dialog>
-
-
-
-  <dialog id="attackDialog" class="modal attack-modal">
-    <form id="attackForm" method="dialog">
-      <div class="modal-heading">
-        <div>
-          <p class="eyebrow">PLAYER ATTACK RESOLVER</p>
-          <h2 id="attackDialogTitle">Attack NPO</h2>
-        </div>
-        <button class="icon-button" value="cancel" formmethod="dialog" aria-label="Close">×</button>
-      </div>
-      <input id="attackTargetId" type="hidden">
-      <div class="target-status" id="attackTargetStatus"></div>
-      <div class="form-split">
-        <label>Normal hits rolled<input id="playerNormalHits" type="number" min="0" max="20" value="2" required></label>
-        <label>Critical hits rolled<input id="playerCritHits" type="number" min="0" max="20" value="0" required></label>
-      </div>
-      <div class="form-split">
-        <label>Normal damage<input id="playerNormalDamage" type="number" min="1" max="20" value="3" required></label>
-        <label>Critical damage<input id="playerCritDamage" type="number" min="1" max="20" value="4" required></label>
-      </div>
-      <div class="form-split">
-        <label>Defence dice<input id="defenceDice" type="number" min="0" max="6" value="3" required></label>
-        <label>AP reduction<input id="attackAp" type="number" min="0" max="3" value="0" required></label>
-      </div>
-      <label class="toggle compact-toggle"><input id="retainCoverSave" type="checkbox"><span>Retain one normal save for cover</span></label>
-      <div class="combat-result-preview" id="combatResultPreview">
-        <p class="muted">Enter the player attack result, then roll the NPO's saves.</p>
-      </div>
-      <div class="modal-actions">
-        <button class="button ghost" value="cancel" formmethod="dialog">Cancel</button>
-        <button class="button primary" id="resolveAttackBtn" value="default">Roll Saves &amp; Apply Damage</button>
-      </div>
-    </form>
-  </dialog>
-
-  <footer class="shell footer">
-    <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
-    <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" target="_blank" rel="noreferrer">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" target="_blank" rel="noreferrer">Official Tomb World mission pack</a></p>
-  </footer>
-
-  <script src="app.js"></script>
+<option value="marksman">Marksman</option>
+<option value="brawler">Brawler</option>
+<option value="sentinel">Sentinel</option>
+<option value="guardian">Objective Guardian</option>
+</select>
+</label>
+<div class="form-split">
+<label>Maximum wounds<input id="npoMaxWounds" max="99" min="1" required="" type="number" value="9"/></label>
+<label>Current wounds<input id="npoWounds" max="99" min="0" required="" type="number" value="9"/></label>
+</div>
+<label>Weapon or role note<input id="npoWeapon" maxlength="80" placeholder="Gauss reaper"/></label>
+<div class="form-split attack-profile-grid">
+<label>Attack dice<input id="npoAttackDice" max="12" min="1" required="" type="number" value="4"/></label>
+<label>Hit on<input id="npoHit" max="6" min="2" required="" type="number" value="4"/></label>
+<label>Normal damage<input id="npoNormalDamage" max="12" min="1" required="" type="number" value="3"/></label>
+<label>Critical damage<input id="npoCritDamage" max="12" min="1" required="" type="number" value="4"/></label>
+</div>
+<p class="form-note">Attack values power the visual dice roller. Adjust them to match the datacard or profile you are using.</p>
+<div class="modal-actions">
+<button class="button ghost" formmethod="dialog" value="cancel">Cancel</button>
+<button class="button primary" id="saveNpoBtn" value="default">Save NPO</button>
+</div>
+</form>
+</dialog>
+<dialog class="modal attack-modal" id="attackDialog">
+<form id="attackForm" method="dialog">
+<div class="modal-heading">
+<div>
+<p class="eyebrow">PLAYER ATTACK RESOLVER</p>
+<h2 id="attackDialogTitle">Attack NPO</h2>
+</div>
+<button aria-label="Close" class="icon-button" formmethod="dialog" value="cancel">×</button>
+</div>
+<input id="attackTargetId" type="hidden"/>
+<div class="target-status" id="attackTargetStatus"></div>
+<div class="form-split">
+<label>Normal hits rolled<input id="playerNormalHits" max="20" min="0" required="" type="number" value="2"/></label>
+<label>Critical hits rolled<input id="playerCritHits" max="20" min="0" required="" type="number" value="0"/></label>
+</div>
+<div class="form-split">
+<label>Normal damage<input id="playerNormalDamage" max="20" min="1" required="" type="number" value="3"/></label>
+<label>Critical damage<input id="playerCritDamage" max="20" min="1" required="" type="number" value="4"/></label>
+</div>
+<div class="form-split">
+<label>Defence dice<input id="defenceDice" max="6" min="0" required="" type="number" value="3"/></label>
+<label>AP reduction<input id="attackAp" max="3" min="0" required="" type="number" value="0"/></label>
+</div>
+<label class="toggle compact-toggle"><input id="retainCoverSave" type="checkbox"/><span>Retain one normal save for cover</span></label>
+<div class="combat-result-preview" id="combatResultPreview">
+<p class="muted">Enter the player attack result, then roll the NPO's saves.</p>
+</div>
+<div class="modal-actions">
+<button class="button ghost" formmethod="dialog" value="cancel">Cancel</button>
+<button class="button primary" id="resolveAttackBtn" value="default">Roll Saves &amp; Apply Damage</button>
+</div>
+</form>
+</dialog>
+<footer class="shell footer">
+<p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
+<p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
+</footer>
+<script src="app.js"></script>
 </body>
 </html>

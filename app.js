@@ -317,9 +317,28 @@
     els.npoType.addEventListener("change", applyTemplateToDialog);
     els.npoForm.addEventListener("submit", saveNpoFromDialog);
     els.attackForm.addEventListener("submit", resolvePlayerAttack);
-    document.querySelectorAll("[data-workspace-tab]").forEach(button => {
-      button.addEventListener("click", () => activateWorkspaceTab(button.dataset.workspaceTab));
-    });
+    const workspaceTabs = document.querySelector(".workspace-tabs");
+    if (workspaceTabs) {
+      workspaceTabs.addEventListener("click", event => {
+        const button = event.target.closest("[data-workspace-tab]");
+        if (!button || !workspaceTabs.contains(button)) return;
+        event.preventDefault();
+        activateWorkspaceTab(button.dataset.workspaceTab, { focus: false });
+      });
+      workspaceTabs.addEventListener("keydown", event => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        const buttons = [...workspaceTabs.querySelectorAll("[data-workspace-tab]")];
+        const current = buttons.indexOf(document.activeElement);
+        if (current < 0) return;
+        event.preventDefault();
+        let next = current;
+        if (event.key === "ArrowLeft") next = (current - 1 + buttons.length) % buttons.length;
+        if (event.key === "ArrowRight") next = (current + 1) % buttons.length;
+        if (event.key === "Home") next = 0;
+        if (event.key === "End") next = buttons.length - 1;
+        activateWorkspaceTab(buttons[next].dataset.workspaceTab, { focus: true });
+      });
+    }
 
     const snapshotMap = {
       ctxEngaged: "engaged",
@@ -343,20 +362,27 @@
     });
   }
 
-  function activateWorkspaceTab(panelId) {
+  function activateWorkspaceTab(panelId, options = {}) {
+    const { focus = false } = options;
+    const targetPanel = document.getElementById(panelId);
+    const targetButton = document.querySelector(`[data-workspace-tab="${panelId}"]`);
+    if (!targetPanel || !targetButton) return;
+
     document.querySelectorAll("[data-workspace-tab]").forEach(button => {
-      const active = button.dataset.workspaceTab === panelId;
+      const active = button === targetButton;
       button.classList.toggle("active", active);
       button.setAttribute("aria-selected", String(active));
-      if (active) button.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      button.tabIndex = active ? 0 : -1;
     });
     document.querySelectorAll(".workspace-panel").forEach(panel => {
-      const active = panel.id === panelId;
+      const active = panel === targetPanel;
       panel.classList.toggle("active", active);
       panel.hidden = !active;
+      panel.setAttribute("aria-hidden", String(!active));
     });
-    const tabs = document.querySelector(".workspace-tabs");
-    if (tabs) window.scrollTo({ top: Math.max(0, tabs.offsetTop - 8), behavior: "smooth" });
+
+    targetButton.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    if (focus) targetButton.focus({ preventScroll: true });
   }
 
   function populateMissionSelect() {

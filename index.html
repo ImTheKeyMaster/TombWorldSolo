@@ -9,7 +9,7 @@
 <title>Tomb World Solo Command</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="styles.css" rel="stylesheet"/>
+<link href="styles.css?v=6" rel="stylesheet"/>
 </head>
 <body>
 <div aria-hidden="true" class="ambient-grid"></div>
@@ -33,14 +33,15 @@
 <label class="button secondary file-button">Import Save<input accept="application/json" id="importInput" type="file"/></label>
 </div>
 </header>
-<main class="shell workspace-shell"><nav aria-label="Tomb World Solo Command sections" class="workspace-tabs panel" role="tablist">
-<button aria-controls="commandWorkspace" aria-selected="true" class="workspace-tab active" data-workspace-tab="commandWorkspace" id="commandTab" role="tab" type="button"><span class="tab-icon">▶</span><span>Command</span></button>
-<button aria-controls="rosterWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="rosterWorkspace" id="rosterTab" role="tab" type="button"><span class="tab-icon">◉</span><span>Roster</span></button>
-<button aria-controls="missionWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="missionWorkspace" id="missionTab" role="tab" type="button"><span class="tab-icon">◆</span><span>Mission</span></button>
-<button aria-controls="eventWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="eventWorkspace" id="eventTab" role="tab" type="button"><span class="tab-icon">⚡</span><span>Anomalies</span></button>
-<button aria-controls="logWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="logWorkspace" id="logTab" role="tab" type="button"><span class="tab-icon">≡</span><span>Battle Record</span></button>
-<button aria-controls="instructionsWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="instructionsWorkspace" id="instructionsTab" role="tab" type="button"><span class="tab-icon">?</span><span>Instructions</span></button>
-<button aria-controls="logicWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="logicWorkspace" id="logicTab" role="tab" type="button"><span class="tab-icon">⌘</span><span>Decision Logic</span></button>
+<main class="shell workspace-shell">
+<nav aria-label="Tomb World Solo Command sections" class="workspace-tabs" role="tablist">
+  <button aria-controls="commandWorkspace" aria-selected="true" class="workspace-tab active" data-workspace-tab="commandWorkspace" id="commandTab" role="tab" tabindex="0" type="button">Command</button>
+  <button aria-controls="rosterWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="rosterWorkspace" id="rosterTab" role="tab" tabindex="-1" type="button">Roster</button>
+  <button aria-controls="missionWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="missionWorkspace" id="missionTab" role="tab" tabindex="-1" type="button">Mission</button>
+  <button aria-controls="eventWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="eventWorkspace" id="eventTab" role="tab" tabindex="-1" type="button">Anomalies</button>
+  <button aria-controls="logWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="logWorkspace" id="logTab" role="tab" tabindex="-1" type="button">Record</button>
+  <button aria-controls="instructionsWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="instructionsWorkspace" id="instructionsTab" role="tab" tabindex="-1" type="button">Instructions</button>
+  <button aria-controls="logicWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="logicWorkspace" id="logicTab" role="tab" tabindex="-1" type="button">Decision Logic</button>
 </nav><section aria-labelledby="commandTab" class="panel workspace-panel command-panel active" id="commandWorkspace" role="tabpanel">
 <div class="panel-heading">
 <div>
@@ -285,6 +286,6 @@
 <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
 <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
 </footer>
-<script src="app.js"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>

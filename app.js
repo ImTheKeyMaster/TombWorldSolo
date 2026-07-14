@@ -224,6 +224,7 @@
     event: null,
     log: [],
     lastActivation: null,
+    nextNpoId: null,
     snapshot: {
       engaged: false,
       validShot: true,
@@ -252,6 +253,7 @@
     rosterGrid: byId("rosterGrid"),
     rosterSummary: byId("rosterSummary"),
     activationOutput: byId("activationOutput"),
+    nextEnemyCard: byId("nextEnemyCard"),
     npoDialog: byId("npoDialog"),
     npoForm: byId("npoForm"),
     dialogTitle: byId("dialogTitle"),
@@ -282,6 +284,8 @@
     populateMissionSelect();
     syncSnapshotControls();
     bindEvents();
+    ensureNextNpo();
+    saveState();
     renderAll();
   }
 
@@ -364,6 +368,7 @@
     els.missionSelect.value = state.missionId;
     renderMission();
     renderEvent();
+    renderNextEnemy();
     renderRoster();
     renderLog();
     renderActivation();
@@ -407,6 +412,31 @@
       <p class="event-effect">${escapeHtml(state.event.effect)}</p>`;
   }
 
+  function renderNextEnemy() {
+    const next = ensureNextNpo();
+    if (!next) {
+      els.nextEnemyCard.classList.add("empty");
+      els.nextEnemyCard.innerHTML = `
+        <div>
+          <p class="eyebrow">NEXT ENEMY</p>
+          <h3>No ready NPO</h3>
+          <p>Start the next turning point or manually ready an operative.</p>
+        </div>`;
+      return;
+    }
+
+    els.nextEnemyCard.classList.remove("empty");
+    els.nextEnemyCard.innerHTML = `
+      <div class="next-enemy-icon" aria-hidden="true">▶</div>
+      <div class="next-enemy-copy">
+        <p class="eyebrow">NEXT TO ACTIVATE</p>
+        <h3>${escapeHtml(next.name)}</h3>
+        <p>${escapeHtml(next.type)} · ${escapeHtml(BEHAVIOR_LABELS[next.behavior] || next.behavior)} · ${next.wounds}/${next.maxWounds} wounds</p>
+        <small>Complete the Battlefield Snapshot for this operative, then select Activate Next Enemy.</small>
+      </div>
+      <span class="next-enemy-lock">LOCKED</span>`;
+  }
+
   function renderRoster() {
     const active = state.npos.filter(n => n.wounds > 0);
     const ready = active.filter(n => n.ready);
@@ -427,6 +457,7 @@
       const classes = ["npo-card"];
       if (!npo.ready) classes.push("expended");
       if (npo.wounds <= 0) classes.push("incapacitated");
+      if (npo.id === state.nextNpoId && npo.ready && npo.wounds > 0) classes.push("next-to-activate");
       const stateLabel = npo.wounds <= 0 ? "Incapacitated" : npo.ready ? "Ready" : "Expended";
       return `
         <article class="${classes.join(" ")}" data-npo-id="${npo.id}">
@@ -482,7 +513,7 @@
         <div class="activation-empty">
           <div class="pulse-ring"></div>
           <h3>Command core standing by</h3>
-          <p>The highest-priority ready NPO will be selected automatically.</p>
+          <p>The operative shown in Next to Activate is locked and ready for its Battlefield Snapshot.</p>
         </div>`;
       return;
     }
@@ -552,11 +583,13 @@
       return;
     }
 
-    const selected = selectNpoByThreat(ready, state.snapshot);
+    const selected = ensureNextNpo();
+    if (!selected) return;
     const result = resolveBehavior(selected, state.snapshot);
     result.attackRoll = rollNpoAttack(selected, result);
     selected.ready = false;
     selected.activations = (selected.activations || 0) + 1;
+    state.nextNpoId = null;
     state.lastActivation = result;
     addLog(`${selected.name} activated: ${result.actions.map(a => a.title).join(" → ")}.`);
     saveAndRender();
@@ -584,6 +617,21 @@
       hits: dice.filter(d => d.kind === "hit").length,
       misses: dice.filter(d => d.kind === "miss").length
     };
+  }
+
+  function ensureNextNpo() {
+    const current = state.npos.find(npo => npo.id === state.nextNpoId && npo.ready && npo.wounds > 0);
+    if (current) return current;
+
+    const ready = state.npos.filter(npo => npo.ready && npo.wounds > 0);
+    if (!ready.length) {
+      state.nextNpoId = null;
+      return null;
+    }
+
+    const selected = selectNpoByThreat(ready, state.snapshot);
+    state.nextNpoId = selected.id;
+    return selected;
   }
 
   function selectNpoByThreat(npos, ctx) {
@@ -1194,6 +1242,7 @@
   }
 
   function saveAndRender() {
+    ensureNextNpo();
     saveState();
     renderAll();
   }
@@ -1243,6 +1292,7 @@
         activations: Number(n.activations || 0)
       })) : base.npos,
       log: Array.isArray(candidate.log) ? candidate.log : [],
+      nextNpoId: typeof candidate.nextNpoId === "string" ? candidate.nextNpoId : null,
       threat: Math.max(0, Math.min(15, Number(candidate.threat || 0))),
       turn: Math.max(1, Number(candidate.turn || 1)),
       missionId: MISSIONS.some(m => m.id === candidate.missionId) ? candidate.missionId : base.missionId

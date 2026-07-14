@@ -56,6 +56,8 @@
         </div>
       </div>
 
+      <section class="next-enemy-card" id="nextEnemyCard" aria-live="polite"></section>
+
       <div class="snapshot-card">
         <div class="snapshot-header">
           <div>
@@ -102,7 +104,7 @@
         <div class="activation-empty">
           <div class="pulse-ring"></div>
           <h3>Command core standing by</h3>
-          <p>The highest-priority ready NPO will be selected automatically.</p>
+          <p>The operative shown above is locked as the next NPO to activate.</p>
         </div>
       </article>
 
@@ -112,11 +114,12 @@
       </div>
     </section>
 
-    <aside class="panel utility-tabs" aria-label="Mission, anomaly, and battle record tools">
+    <aside class="panel utility-tabs" aria-label="Mission, anomaly, battle record, and decision logic tools">
       <div class="tab-list" role="tablist" aria-label="Battle tools">
         <button class="tab-button active" id="missionTab" type="button" role="tab" aria-selected="true" aria-controls="missionPanel" data-tab="missionPanel">Mission</button>
         <button class="tab-button" id="eventTab" type="button" role="tab" aria-selected="false" aria-controls="eventPanel" data-tab="eventPanel">Anomalies</button>
         <button class="tab-button" id="logTab" type="button" role="tab" aria-selected="false" aria-controls="logPanel" data-tab="logPanel">Battle Record</button>
+        <button class="tab-button" id="logicTab" type="button" role="tab" aria-selected="false" aria-controls="logicPanel" data-tab="logicPanel">Decision Logic</button>
       </div>
 
       <section class="tab-panel active" id="missionPanel" role="tabpanel" aria-labelledby="missionTab">
@@ -155,6 +158,37 @@
         </div>
         <ol id="activityLog" class="activity-log"></ol>
       </section>
+
+      <section class="tab-panel" id="logicPanel" role="tabpanel" aria-labelledby="logicTab" hidden>
+        <div class="panel-heading compact">
+          <div>
+            <p class="eyebrow">AI REFERENCE</p>
+            <h2>Decision Logic</h2>
+          </div>
+        </div>
+        <div class="logic-grid">
+          <article>
+            <span class="logic-number">01</span>
+            <h3>Queue the operative</h3>
+            <p>The next ready NPO is selected and locked before you complete the Battlefield Snapshot, so the context always applies to the operative shown.</p>
+          </article>
+          <article>
+            <span class="logic-number">02</span>
+            <h3>Follow behavior</h3>
+            <p>Brawlers close and fight. Marksmen seek clear shots. Sentinels fight nearby threats, then bring ranged weapons to bear.</p>
+          </article>
+          <article>
+            <span class="logic-number">03</span>
+            <h3>Break ties against the player</h3>
+            <p>Choose the result most likely to incapacitate a player operative or prevent mission success. Randomize only true ties.</p>
+          </article>
+          <article>
+            <span class="logic-number">04</span>
+            <h3>Resolve on the tabletop</h3>
+            <p>The app provides order, movement, target, action sequence, and a visual attack roll. Apply defence and special rules from the datacards you are using.</p>
+          </article>
+        </div>
+      </section>
     </aside>
 
     <section class="panel roster-panel" aria-labelledby="rosterHeading">
@@ -173,36 +207,7 @@
       <div id="rosterGrid" class="roster-grid"></div>
     </section>
 
-    <section class="panel reference-panel" aria-labelledby="referenceHeading">
-      <div class="panel-heading">
-        <div>
-          <p class="eyebrow">AI REFERENCE</p>
-          <h2 id="referenceHeading">Decision Logic</h2>
-        </div>
-      </div>
-      <div class="logic-grid">
-        <article>
-          <span class="logic-number">01</span>
-          <h3>Select the threat</h3>
-          <p>Prioritize an NPO that can attack, interfere with the mission, exploit an exposed operative, or reach the closest player.</p>
-        </article>
-        <article>
-          <span class="logic-number">02</span>
-          <h3>Follow behavior</h3>
-          <p>Brawlers close and fight. Marksmen seek clear shots. Sentinels fight nearby threats, then bring ranged weapons to bear.</p>
-        </article>
-        <article>
-          <span class="logic-number">03</span>
-          <h3>Break ties against the player</h3>
-          <p>Choose the result most likely to incapacitate a player operative or prevent mission success. Randomize only true ties.</p>
-        </article>
-        <article>
-          <span class="logic-number">04</span>
-          <h3>Resolve on the tabletop</h3>
-          <p>The app provides order, movement, target, action sequence, and a visual attack roll. Apply defence and special rules from the datacards you are using.</p>
-        </article>
-      </div>
-    </section>
+
   </main>
 
   <dialog id="npoDialog" class="modal">

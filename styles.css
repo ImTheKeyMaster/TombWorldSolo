@@ -361,7 +361,7 @@ select, input[type="text"], input[type="number"], input:not([type]) {
 .utility-tabs { min-width: 0; }
 .tab-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 6px;
   padding: 8px;
   border-bottom: 1px solid var(--line);
@@ -514,10 +514,75 @@ select, input[type="text"], input[type="number"], input:not([type]) {
 }
 
 @media (max-width: 620px) {
-  .tab-list { overflow-x: auto; grid-template-columns: repeat(3, minmax(105px, 1fr)); }
+  .tab-list { overflow-x: auto; grid-template-columns: repeat(4, minmax(105px, 1fr)); }
   .tab-panel { padding: 15px; }
   .attack-roll-heading, .combat-result-head, .target-status, .wound-change { flex-direction: column; }
   .profile-chip { white-space: normal; }
   .die { width: 52px; min-height: 58px; }
   .attack-profile-grid { grid-template-columns: 1fr 1fr; }
+}
+
+
+/* Locked next-enemy preview */
+.next-enemy-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 14px;
+  padding: 14px 15px;
+  border: 1px solid rgba(255, 200, 91, .34);
+  border-radius: 13px;
+  background: linear-gradient(135deg, rgba(255, 190, 68, .12), rgba(97, 255, 173, .055));
+  box-shadow: inset 0 1px rgba(255,255,255,.04), 0 10px 30px rgba(0,0,0,.16);
+}
+.next-enemy-card.empty { grid-template-columns: 1fr; border-color: var(--line); background: rgba(0,0,0,.18); }
+.next-enemy-card h3 { margin: 0 0 3px; color: #fff2bb; font-size: 1.18rem; }
+.next-enemy-card p { margin: 0; color: var(--muted); font-size: .76rem; line-height: 1.45; }
+.next-enemy-card small { display: block; margin-top: 5px; color: var(--green-bright); font-size: .68rem; line-height: 1.4; }
+.next-enemy-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #07130e;
+  background: #ffd57c;
+  box-shadow: 0 0 22px rgba(255, 190, 68, .18);
+}
+.next-enemy-lock {
+  align-self: start;
+  padding: 5px 8px;
+  border: 1px solid rgba(255,200,91,.28);
+  border-radius: 999px;
+  color: #ffd57c;
+  font-size: .58rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+}
+.npo-card.next-to-activate {
+  border-color: rgba(255, 200, 91, .58);
+  box-shadow: 0 0 0 2px rgba(255, 190, 68, .08), 0 0 28px rgba(255, 190, 68, .12);
+}
+.npo-card.next-to-activate::before {
+  content: "NEXT";
+  position: absolute;
+  z-index: 3;
+  top: 8px;
+  right: 8px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  color: #2b1b00;
+  background: #ffd57c;
+  font-size: .55rem;
+  font-weight: 950;
+  letter-spacing: .1em;
+}
+.utility-tabs .logic-grid { grid-template-columns: 1fr; }
+.utility-tabs .logic-grid article { padding: 13px; }
+.utility-tabs .logic-grid h3 { margin-top: 9px; }
+
+@media (max-width: 620px) {
+  .next-enemy-card { grid-template-columns: auto minmax(0, 1fr); }
+  .next-enemy-lock { grid-column: 2; justify-self: start; }
 }

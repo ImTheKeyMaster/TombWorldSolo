@@ -560,10 +560,33 @@
 
   function renderDice(dice) {
     return dice.map(die => `
-      <span class="die ${die.kind}" title="${escapeHtml(die.label)}">
-        <span class="die-face">${die.value}</span>
+      <span class="die ${die.kind}" title="${escapeHtml(die.label)}: ${escapeHtml(String(die.value))}" aria-label="${escapeHtml(die.label)}. Die result ${escapeHtml(String(die.value))}.">
+        ${renderDieFace(die.value, die.kind)}
         <small>${escapeHtml(die.label)}</small>
       </span>`).join("");
+  }
+
+  function renderDieFace(value, kind) {
+    const numericValue = Number(value);
+    if (!Number.isInteger(numericValue) || numericValue < 1 || numericValue > 6) {
+      return `<span class="die-face die-face-symbol" aria-hidden="true">${kind === "cover" ? "◆" : escapeHtml(String(value))}</span>`;
+    }
+
+    const pipPositions = {
+      1: [5],
+      2: [1, 9],
+      3: [1, 5, 9],
+      4: [1, 3, 7, 9],
+      5: [1, 3, 5, 7, 9],
+      6: [1, 3, 4, 6, 7, 9]
+    };
+    const occupied = new Set(pipPositions[numericValue]);
+    const pips = Array.from({ length: 9 }, (_, index) => {
+      const position = index + 1;
+      return `<i class="pip${occupied.has(position) ? " visible" : ""}" aria-hidden="true"></i>`;
+    }).join("");
+
+    return `<span class="die-face die-pips face-${numericValue}" aria-hidden="true">${pips}</span>`;
   }
 
   function activateNextEnemy() {

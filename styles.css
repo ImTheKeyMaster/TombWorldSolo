@@ -426,6 +426,33 @@ select, input[type="text"], input[type="number"], input:not([type]) {
   box-shadow: inset 0 1px rgba(255,255,255,.06), 0 6px 18px rgba(0,0,0,.18);
 }
 .die-face { font-size: 1.45rem; line-height: 1; font-weight: 950; }
+.die-pips {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+  padding: 2px;
+}
+.pip {
+  width: 6px;
+  height: 6px;
+  align-self: center;
+  justify-self: center;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,.32);
+}
+.pip.visible { opacity: 1; }
+.die-face-symbol {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  font-size: 1.05rem;
+}
 .die small { font-size: .56rem; font-weight: 850; text-transform: uppercase; letter-spacing: .04em; text-align: center; }
 .die.critical { color: #fff2bb; border-color: rgba(255,208,84,.65); background: linear-gradient(145deg, rgba(255,188,36,.28), rgba(114,65,0,.34)); box-shadow: 0 0 20px rgba(255,185,35,.16), inset 0 1px rgba(255,255,255,.16); }
 .die.hit { color: #c9ffe1; border-color: rgba(97,255,173,.55); background: linear-gradient(145deg, rgba(55,210,126,.24), rgba(4,76,39,.3)); }

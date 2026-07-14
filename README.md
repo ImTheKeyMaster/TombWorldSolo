@@ -60,3 +60,5 @@ The **Battlefield Snapshot** supplies information the browser cannot see, such a
 This project is an unofficial fan-made play aid. It does not reproduce the official mission maps, full mission text, full datacards, or full event cards. Mission and event content in the app is summarized for tracking and automation. Use it alongside the official Kill Team rules and Tomb World mission pack.
 
 Kill Team, Necrons, Tomb World, and related names are trademarks or intellectual property of Games Workshop Limited. This project is not affiliated with or endorsed by Games Workshop.
+
+- Dice results are displayed as standard pip faces rather than numerals.

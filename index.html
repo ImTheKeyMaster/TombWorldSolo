@@ -10,7 +10,7 @@
 <title>Tomb World Solo Command</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="styles.css?v=7" rel="stylesheet"/>
+<link href="styles.css?v=8" rel="stylesheet"/>
 </head>
 <body>
 <div aria-hidden="true" class="ambient-grid"></div>
@@ -275,10 +275,19 @@
 </div>
 </form>
 </dialog>
+<dialog class="modal map-modal" id="mapDialog">
+<div class="map-modal-shell">
+<div class="modal-heading">
+<div><p class="eyebrow">MISSION BOARD LAYOUT</p><h2 id="mapDialogTitle">Mission Map</h2></div>
+<button aria-label="Close board layout" class="icon-button" id="closeMapBtn" type="button">×</button>
+</div>
+<div id="mapDialogContent"></div>
+</div>
+</dialog>
 <footer class="shell footer">
 <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
 <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
 </footer>
-<script src="app.js?v=7"></script>
+<script src="app.js?v=8"></script>
 </body>
 </html>

@@ -124,6 +124,58 @@
     }
   ];
 
+
+  const MISSION_MAPS = {
+    "shifting-labyrinth": {
+      orientation: "left",
+      note: "Player A begins at the left edge. NPOs deploy throughout Player B territory. The escape point starts at the centre of the far edge and may move during the battle.",
+      walls: [[180,30,180,155],[270,155,270,300],[430,30,430,160],[610,150,610,300],[680,300,680,460],[180,155,610,155],[270,300,680,300],[430,390,610,390]],
+      hatches: [[270,215,"v"],[430,95,"v"],[430,350,"v"],[520,155,"h"],[560,300,"h"],[610,225,"v"]],
+      npos: [[485,95],[545,225],[485,350]],
+      markers: [{kind:"exit",x:770,y:245,label:"ESCAPE"}]
+    },
+    "demolition-protocol": {
+      orientation: "left",
+      note: "Player A begins at the left edge. NPOs deploy throughout Player B territory. Green access points are the suggested hatchways and breach points to track for Sabotage.",
+      walls: [[350,30,350,175],[500,30,500,185],[140,175,650,175],[250,175,250,325],[450,175,450,460],[650,175,650,325],[150,325,650,325]],
+      hatches: [[350,100,"v"],[500,110,"v"],[250,245,"v"],[450,245,"v"],[650,245,"v"],[300,175,"h"],[550,175,"h"],[340,325,"h"],[555,325,"h"]],
+      npos: [[545,105],[555,245],[520,385]],
+      markers: [{kind:"breach",x:300,y:175,label:"BREACH"},{kind:"breach",x:555,y:325,label:"BREACH"}]
+    },
+    "recover-transponder": {
+      orientation: "bottom",
+      note: "Player A begins along the lower edge. Place the three objective markers in separate rooms and distribute the starting NPOs among those rooms.",
+      walls: [[30,110,770,110],[250,110,250,265],[520,110,520,365],[30,265,520,265],[250,365,770,365]],
+      hatches: [[250,185,"v"],[520,190,"v"],[520,320,"v"],[150,265,"h"],[385,265,"h"],[650,365,"h"]],
+      npos: [[205,205],[455,185],[625,320]],
+      markers: [{kind:"objective",x:165,y:205,label:"1"},{kind:"objective",x:440,y:185,label:"2"},{kind:"objective",x:625,y:320,label:"3"}]
+    },
+    "destroy-sarcophagus": {
+      orientation: "bottom",
+      note: "Player A begins along the lower edge. Half of the starting NPOs deploy in the room containing the sarcophagus; the remainder spread across the other rooms.",
+      walls: [[350,30,350,305],[530,120,530,365],[350,120,770,120],[30,305,530,305],[150,305,150,460],[150,395,530,395]],
+      hatches: [[350,185,"v"],[530,185,"v"],[530,340,"v"],[245,305,"h"],[440,305,"h"],[330,395,"h"]],
+      npos: [[425,180],[475,220],[620,175],[250,245]],
+      markers: [{kind:"sarcophagus",x:435,y:215,label:"SARCOPHAGUS"}]
+    },
+    "scout-sub-crypt": {
+      orientation: "bottom",
+      note: "Player A begins along the lower edge. No NPOs are placed at setup. Each numbered room can awaken a new group when first opened or entered.",
+      walls: [[160,30,160,235],[360,30,360,335],[590,100,590,335],[30,165,360,165],[360,255,770,255],[150,345,590,345]],
+      hatches: [[160,105,"v"],[360,100,"v"],[360,285,"v"],[590,180,"v"],[250,165,"h"],[480,255,"h"],[300,345,"h"]],
+      npos: [],
+      markers: [{kind:"room",x:95,y:95,label:"1"},{kind:"room",x:260,y:95,label:"2"},{kind:"room",x:475,y:175,label:"3"},{kind:"room",x:680,y:165,label:"4"},{kind:"room",x:480,y:390,label:"5"}]
+    },
+    "regroup": {
+      orientation: "left-regroup",
+      note: "Player A begins at the left edge. The outlined far zone is Player B's drop zone. Green hatchways are phasing points that can relocate operatives.",
+      walls: [[200,30,200,250],[390,30,390,460],[520,30,520,205],[200,135,650,135],[30,285,520,285],[200,395,770,395]],
+      hatches: [[200,100,"v"],[390,90,"v"],[390,225,"v"],[520,115,"v"],[285,285,"h"],[455,285,"h"],[300,395,"h"],[620,395,"h"]],
+      npos: [[480,85],[610,245],[500,345]],
+      markers: [{kind:"regroup",x:690,y:235,label:"REGROUP"}]
+    }
+  };
+
   const EVENTS = [
     {
       name: "Dark of the Tomb",
@@ -275,6 +327,9 @@
     attackTargetStatus: byId("attackTargetStatus"),
     combatResultPreview: byId("combatResultPreview"),
     resolveAttackBtn: byId("resolveAttackBtn"),
+    mapDialog: byId("mapDialog"),
+    mapDialogTitle: byId("mapDialogTitle"),
+    mapDialogContent: byId("mapDialogContent"),
     importInput: byId("importInput")
   };
 
@@ -317,6 +372,10 @@
     els.npoType.addEventListener("change", applyTemplateToDialog);
     els.npoForm.addEventListener("submit", saveNpoFromDialog);
     els.attackForm.addEventListener("submit", resolvePlayerAttack);
+    byId("closeMapBtn").addEventListener("click", () => els.mapDialog.close());
+    els.mapDialog.addEventListener("click", event => {
+      if (event.target === els.mapDialog) els.mapDialog.close();
+    });
     const workspaceTabs = document.querySelector(".workspace-tabs");
     if (workspaceTabs) {
       workspaceTabs.addEventListener("click", event => {
@@ -403,6 +462,111 @@
     renderActivation();
   }
 
+  function missionMapSvg(mission, expanded = false) {
+    const map = MISSION_MAPS[mission.id];
+    if (!map) return "";
+
+    const zoneMarkup = map.orientation === "bottom"
+      ? `
+        <rect class="map-zone map-zone-enemy" x="30" y="30" width="740" height="235" rx="7"></rect>
+        <rect class="map-zone map-zone-player" x="30" y="265" width="740" height="100"></rect>
+        <rect class="map-zone map-zone-drop" x="30" y="365" width="740" height="95" rx="0 0 7 7"></rect>
+        <line class="map-boundary" x1="30" y1="265" x2="770" y2="265"></line>
+        <text class="map-zone-label" x="52" y="430">PLAYER A DROP ZONE</text>
+        <text class="map-zone-label enemy-label" x="52" y="58">PLAYER B TERRITORY</text>`
+      : `
+        <rect class="map-zone map-zone-drop" x="30" y="30" width="130" height="430" rx="7 0 0 7"></rect>
+        <rect class="map-zone map-zone-player" x="160" y="30" width="240" height="430"></rect>
+        <rect class="map-zone map-zone-enemy" x="400" y="30" width="370" height="430" rx="0 7 7 0"></rect>
+        <line class="map-boundary" x1="400" y1="30" x2="400" y2="460"></line>
+        <text class="map-zone-label vertical-label" x="76" y="245" transform="rotate(-90 76 245)">PLAYER A DROP ZONE</text>
+        <text class="map-zone-label enemy-label" x="565" y="58">PLAYER B TERRITORY</text>
+        ${map.orientation === "left-regroup" ? `<rect class="map-regroup-zone" x="635" y="42" width="122" height="406" rx="9"></rect><text class="map-zone-label regroup-zone-label" x="696" y="438" text-anchor="middle">PLAYER B DROP ZONE</text>` : ""}`;
+
+    const walls = map.walls.map(([x1,y1,x2,y2]) =>
+      `<line class="map-wall" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line>`
+    ).join("");
+
+    const hatches = map.hatches.map(([x,y,orientation], index) => {
+      const vertical = orientation === "v";
+      const x1 = vertical ? x : x - 17;
+      const y1 = vertical ? y - 17 : y;
+      const x2 = vertical ? x : x + 17;
+      const y2 = vertical ? y + 17 : y;
+      return `<g class="map-hatch" aria-label="Access point ${index + 1}"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"></line><circle cx="${x}" cy="${y}" r="4"></circle></g>`;
+    }).join("");
+
+    const npos = map.npos.map(([x,y], index) =>
+      `<g class="map-npo" transform="translate(${x} ${y})" aria-label="Suggested NPO deployment ${index + 1}"><circle r="13"></circle><path d="M-6 -2 0 -8 6 -2 4 7 0 10 -4 7Z"></path><circle cx="-3" cy="0" r="1.7"></circle><circle cx="3" cy="0" r="1.7"></circle></g>`
+    ).join("");
+
+    const markers = map.markers.map(marker => renderMapMarker(marker)).join("");
+    const subtitle = expanded ? "Expanded schematic" : "Mission setup schematic";
+
+    return `
+      <div class="mission-map-frame ${expanded ? "expanded" : ""}">
+        <svg class="mission-map-svg" viewBox="0 0 800 500" role="img" aria-labelledby="map-title-${mission.id} map-desc-${mission.id}">
+          <title id="map-title-${mission.id}">${escapeHtml(mission.name)} board layout</title>
+          <desc id="map-desc-${mission.id}">${escapeHtml(map.note)}</desc>
+          <defs>
+            <pattern id="grid-${mission.id}" width="53" height="53" patternUnits="userSpaceOnUse">
+              <path d="M 53 0 L 0 0 0 53" class="map-grid-line"></path>
+            </pattern>
+            <filter id="glow-${mission.id}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.8" result="blur"></feGaussianBlur><feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter>
+          </defs>
+          <rect class="map-canvas" x="18" y="18" width="764" height="454" rx="12"></rect>
+          ${zoneMarkup}
+          <rect class="map-grid-fill" x="30" y="30" width="740" height="430" rx="7" fill="url(#grid-${mission.id})"></rect>
+          ${walls}
+          ${hatches}
+          ${npos}
+          ${markers}
+          <text class="map-compass" x="746" y="488" text-anchor="end">${subtitle.toUpperCase()} · NOT TO SCALE</text>
+        </svg>
+      </div>`;
+  }
+
+  function renderMapMarker(marker) {
+    const label = escapeHtml(marker.label || "");
+    if (marker.kind === "objective") {
+      return `<g class="map-marker map-objective" transform="translate(${marker.x} ${marker.y})"><path d="M0 -16 16 0 0 16 -16 0Z"></path><text y="4" text-anchor="middle">${label}</text></g>`;
+    }
+    if (marker.kind === "sarcophagus") {
+      return `<g class="map-marker map-sarcophagus" transform="translate(${marker.x} ${marker.y})"><rect x="-54" y="-20" width="108" height="40" rx="12"></rect><path d="M-37 0 H37"></path><text y="5" text-anchor="middle">S</text><text class="map-marker-caption" y="38" text-anchor="middle">${label}</text></g>`;
+    }
+    if (marker.kind === "exit") {
+      return `<g class="map-marker map-exit" transform="translate(${marker.x} ${marker.y})"><path d="M-42 -22 H-10 V-38 L22 0 -10 38 V22 H-42Z"></path><text class="map-marker-caption" x="-60" y="5" text-anchor="end">${label}</text></g>`;
+    }
+    if (marker.kind === "breach") {
+      return `<g class="map-marker map-breach" transform="translate(${marker.x} ${marker.y})"><circle r="16"></circle><path d="M-8 8 8 -8 M-8 -8 8 8"></path><text class="map-marker-caption" y="35" text-anchor="middle">${label}</text></g>`;
+    }
+    if (marker.kind === "room") {
+      return `<g class="map-marker map-room" transform="translate(${marker.x} ${marker.y})"><circle r="23"></circle><text y="7" text-anchor="middle">${label}</text></g>`;
+    }
+    if (marker.kind === "regroup") {
+      return `<g class="map-marker map-regroup" transform="translate(${marker.x} ${marker.y})"><circle r="26"></circle><path d="M-12 0 H12 M0 -12 V12"></path><text class="map-marker-caption" y="45" text-anchor="middle">${label}</text></g>`;
+    }
+    return "";
+  }
+
+  function openMissionMap(mission) {
+    const map = MISSION_MAPS[mission.id];
+    if (!map) return;
+    els.mapDialogTitle.textContent = `${mission.number} · ${mission.name}`;
+    els.mapDialogContent.innerHTML = `
+      ${missionMapSvg(mission, true)}
+      <p class="map-dialog-note">${escapeHtml(map.note)}</p>
+      <div class="map-legend" aria-label="Board layout legend">
+        <span><i class="legend-swatch drop"></i> Player A drop zone</span>
+        <span><i class="legend-swatch player"></i> Player A territory</span>
+        <span><i class="legend-swatch enemy"></i> Player B territory</span>
+        <span><i class="legend-symbol npo"></i> Suggested NPO area</span>
+        <span><i class="legend-symbol hatch"></i> Hatch / access point</span>
+        <span><i class="legend-symbol marker"></i> Mission marker</span>
+      </div>`;
+    els.mapDialog.showModal();
+  }
+
   function renderMission() {
     const mission = currentMission();
     const progress = Number(state.missionProgress[mission.id] || 0);
@@ -413,6 +577,21 @@
       <p>${escapeHtml(mission.summary)}</p>
       <div class="mission-goal"><strong>Objective:</strong> ${escapeHtml(mission.goal)}</div>
       <p><strong>Setup note:</strong> ${escapeHtml(mission.setup)}</p>
+      <section class="mission-layout-section" aria-label="Mission board layout">
+        <div class="mission-layout-heading">
+          <div><span class="mission-number">BOARD LAYOUT</span><h4>${escapeHtml(mission.name)} setup</h4></div>
+          <button class="button secondary map-expand-button" type="button" data-expand-map>Open Large Map</button>
+        </div>
+        ${missionMapSvg(mission)}
+        <p class="mission-map-note">${escapeHtml(MISSION_MAPS[mission.id].note)}</p>
+        <div class="map-legend compact" aria-label="Board layout legend">
+          <span><i class="legend-swatch drop"></i> A drop zone</span>
+          <span><i class="legend-swatch enemy"></i> B territory</span>
+          <span><i class="legend-symbol npo"></i> NPO</span>
+          <span><i class="legend-symbol hatch"></i> Hatch</span>
+          <span><i class="legend-symbol marker"></i> Mission marker</span>
+        </div>
+      </section>
       <div class="wound-label"><span>${escapeHtml(mission.trackerLabel)}</span><strong>${progress} / ${mission.trackerMax}</strong></div>
       <div class="meter"><span style="width:${percentage}%"></span></div>
       <div class="progress-row">
@@ -420,6 +599,8 @@
         <input type="range" min="0" max="${mission.trackerMax}" value="${progress}" data-progress-range aria-label="Mission progress">
         <button class="icon-button" type="button" data-progress="1" aria-label="Increase mission progress">+</button>
       </div>`;
+
+    els.missionCard.querySelector("[data-expand-map]").addEventListener("click", () => openMissionMap(mission));
 
     els.missionCard.querySelectorAll("[data-progress]").forEach(button => {
       button.addEventListener("click", () => updateMissionProgress(Number(button.dataset.progress)));

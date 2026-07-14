@@ -14,7 +14,7 @@ A visual, static web app for running solo or cooperative Kill Team battles again
 - 2D6-style Necron roster and reinforcement generation
 - Threat level and threat grade tracker
 - Tabbed Mission Control, Tomb Anomalies, and Battle Record tools for better mobile use
-- Six Tomb World mission-assistant presets with progress trackers
+- Six Tomb World mission-assistant presets with progress trackers and responsive schematic board layouts
 - Random tomb events, including awakened Necrons, living metal repair, reanimation, shifting passages, and temporal effects
 - Player attack resolver that rolls NPO saves, applies AP and cover, calculates damage, and updates wounds automatically
 - Skull watermark on incapacitated NPO cards
@@ -61,7 +61,7 @@ The **Battlefield Snapshot** supplies information the browser cannot see, such a
 
 ## Rules and intellectual property note
 
-This project is an unofficial fan-made play aid. It does not reproduce the official mission maps, full mission text, full datacards, or full event cards. Mission and event content in the app is summarized for tracking and automation. Use it alongside the official Kill Team rules and Tomb World mission pack.
+This project is an unofficial fan-made play aid. Its board diagrams are simplified, original schematics and do not reproduce the official map artwork or terrain-identification labels. It also does not reproduce full mission text, full datacards, or full event cards. Mission and event content in the app is summarized for tracking and automation. Use it alongside the official Kill Team rules and Tomb World mission pack.
 
 Kill Team, Necrons, Tomb World, and related names are trademarks or intellectual property of Games Workshop Limited. This project is not affiliated with or endorsed by Games Workshop.
 

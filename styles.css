@@ -782,3 +782,111 @@ select, input[type="text"], input[type="number"], input:not([type]) {
   }
   .embedded-logic { margin-top: 18px; padding-top: 17px; }
 }
+
+/* v8: mission board-layout schematics */
+.mission-layout-section {
+  margin: 16px 0;
+  padding: 14px;
+  border: 1px solid rgba(112,255,178,.14);
+  border-radius: 13px;
+  background: linear-gradient(155deg, rgba(97,255,173,.045), rgba(0,0,0,.2));
+}
+.mission-layout-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 11px;
+}
+.mission-layout-heading h4 { margin: 3px 0 0; font-size: 1rem; }
+.map-expand-button { padding: 8px 11px; font-size: .7rem; white-space: nowrap; }
+.mission-map-frame {
+  overflow: hidden;
+  border: 1px solid rgba(126,255,186,.19);
+  border-radius: 12px;
+  background: #050c08;
+  box-shadow: inset 0 0 40px rgba(0,0,0,.42);
+}
+.mission-map-frame.expanded { border-radius: 14px; }
+.mission-map-svg { display: block; width: 100%; height: auto; min-height: 260px; }
+.map-canvas { fill: #07110c; stroke: rgba(146,255,195,.2); stroke-width: 2; }
+.map-zone { stroke: none; }
+.map-zone-drop { fill: rgba(230,111,54,.68); }
+.map-zone-player { fill: rgba(226,157,101,.28); }
+.map-zone-enemy { fill: rgba(143,158,151,.21); }
+.map-regroup-zone { fill: rgba(97,255,173,.045); stroke: rgba(97,255,173,.72); stroke-width: 3; stroke-dasharray: 10 8; }
+.map-grid-fill { fill-opacity: 1; pointer-events: none; }
+.map-grid-line { fill: none; stroke: rgba(184,215,197,.1); stroke-width: 1; }
+.map-boundary { stroke: #ff715d; stroke-width: 3; stroke-dasharray: 9 7; }
+.map-wall { stroke: #0b0d0c; stroke-width: 15; stroke-linecap: square; }
+.map-hatch line { stroke: #57e38f; stroke-width: 8; stroke-linecap: round; stroke-dasharray: 8 5; }
+.map-hatch circle { fill: #8affb4; stroke: #092115; stroke-width: 2; }
+.map-npo circle { fill: #111714; stroke: #ff653f; stroke-width: 4; }
+.map-npo path { fill: #ff653f; }
+.map-npo circle:not(:first-child) { fill: #07110c; stroke: none; }
+.map-zone-label {
+  fill: rgba(255,246,235,.83);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+}
+.enemy-label { fill: rgba(207,226,215,.72); }
+.regroup-zone-label { fill: #9effc1; font-size: 10px; }
+.vertical-label { font-size: 11px; }
+.map-compass { fill: rgba(161,190,174,.58); font-size: 9px; font-weight: 800; letter-spacing: 1.1px; }
+.map-marker path, .map-marker rect, .map-marker circle { vector-effect: non-scaling-stroke; }
+.map-marker text { fill: #06100b; font-size: 13px; font-weight: 950; }
+.map-marker-caption { fill: #d9ffea !important; font-size: 10px !important; letter-spacing: 1px; }
+.map-objective path { fill: #ffd35b; stroke: #fff0b0; stroke-width: 2; filter: drop-shadow(0 0 5px rgba(255,211,91,.6)); }
+.map-sarcophagus rect { fill: #111714; stroke: #ffd35b; stroke-width: 4; }
+.map-sarcophagus path { stroke: #ffd35b; stroke-width: 2; }
+.map-sarcophagus text:not(.map-marker-caption) { fill: #ffd35b; }
+.map-exit path { fill: #72ffad; stroke: #d8ffe8; stroke-width: 2; filter: drop-shadow(0 0 7px rgba(97,255,173,.65)); }
+.map-breach circle { fill: #101511; stroke: #ffce65; stroke-width: 4; }
+.map-breach path { stroke: #ffce65; stroke-width: 4; }
+.map-room circle { fill: rgba(7,18,12,.88); stroke: #83ffb5; stroke-width: 3; }
+.map-room text { fill: #baffd2; font-size: 19px; }
+.map-regroup circle { fill: rgba(97,255,173,.1); stroke: #75ffac; stroke-width: 4; stroke-dasharray: 7 5; }
+.map-regroup path { stroke: #75ffac; stroke-width: 4; }
+.mission-map-note, .map-dialog-note {
+  margin: 10px 0 0 !important;
+  color: var(--muted);
+  font-size: .76rem !important;
+  line-height: 1.5;
+}
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 13px;
+  color: var(--muted);
+  font-size: .72rem;
+}
+.map-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend-swatch, .legend-symbol { display: inline-block; flex: 0 0 auto; }
+.legend-swatch { width: 17px; height: 10px; border-radius: 3px; border: 1px solid rgba(255,255,255,.18); }
+.legend-swatch.drop { background: rgba(230,111,54,.78); }
+.legend-swatch.player { background: rgba(226,157,101,.4); }
+.legend-swatch.enemy { background: rgba(143,158,151,.34); }
+.legend-symbol.npo { width: 13px; height: 13px; border: 3px solid #ff653f; border-radius: 50%; background: #111714; }
+.legend-symbol.hatch { width: 19px; height: 0; border-top: 4px dashed #57e38f; }
+.legend-symbol.marker { width: 12px; height: 12px; transform: rotate(45deg); background: #ffd35b; }
+.map-modal { width: min(1120px, calc(100vw - 26px)); max-width: none; padding: 0; border: 1px solid var(--line-strong); border-radius: 18px; color: var(--text); background: #07110c; }
+.map-modal::backdrop { background: rgba(0,0,0,.84); backdrop-filter: blur(5px); }
+.map-modal-shell { padding: 20px; }
+.map-modal .mission-map-svg { min-height: 0; max-height: calc(100vh - 220px); }
+.map-modal .mission-map-frame { max-height: calc(100vh - 190px); overflow: auto; }
+
+@media (max-width: 620px) {
+  .mission-layout-section { margin-inline: -3px; padding: 11px; }
+  .mission-layout-heading { align-items: flex-start; }
+  .map-expand-button { padding: 7px 9px; font-size: .64rem; }
+  .mission-map-svg { min-height: 215px; }
+  .map-zone-label { font-size: 10px; letter-spacing: .7px; }
+  .vertical-label { font-size: 9px; }
+  .map-wall { stroke-width: 13; }
+  .map-legend.compact { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+  .map-modal-shell { padding: 13px; }
+  .map-modal .mission-map-frame { overflow: auto; }
+  .map-modal .mission-map-svg { width: 820px; max-width: none; }
+}

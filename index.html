@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -9,7 +10,7 @@
 <title>Tomb World Solo Command</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="styles.css?v=6" rel="stylesheet"/>
+<link href="styles.css?v=7" rel="stylesheet"/>
 </head>
 <body>
 <div aria-hidden="true" class="ambient-grid"></div>
@@ -27,7 +28,7 @@
 <p class="hero-copy">Run Necron non-player operatives, resolve activations, track threat, and manage narrative mission events through focused battle tabs.</p>
 </div>
 </div>
-<div class="hero-actions">
+<div aria-label="Session controls" class="hero-actions">
 <button class="button ghost" id="resetCampaignBtn" type="button">Reset Session</button>
 <button class="button secondary" id="exportBtn" type="button">Export Save</button>
 <label class="button secondary file-button">Import Save<input accept="application/json" id="importInput" type="file"/></label>
@@ -35,13 +36,13 @@
 </header>
 <main class="shell workspace-shell">
 <nav aria-label="Tomb World Solo Command sections" class="workspace-tabs" role="tablist">
-  <button aria-controls="commandWorkspace" aria-selected="true" class="workspace-tab active" data-workspace-tab="commandWorkspace" id="commandTab" role="tab" tabindex="0" type="button">Command</button>
-  <button aria-controls="rosterWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="rosterWorkspace" id="rosterTab" role="tab" tabindex="-1" type="button">Roster</button>
-  <button aria-controls="missionWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="missionWorkspace" id="missionTab" role="tab" tabindex="-1" type="button">Mission</button>
-  <button aria-controls="eventWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="eventWorkspace" id="eventTab" role="tab" tabindex="-1" type="button">Anomalies</button>
-  <button aria-controls="logWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="logWorkspace" id="logTab" role="tab" tabindex="-1" type="button">Record</button>
-  <button aria-controls="instructionsWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="instructionsWorkspace" id="instructionsTab" role="tab" tabindex="-1" type="button">Instructions</button>
-  <button aria-controls="logicWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="logicWorkspace" id="logicTab" role="tab" tabindex="-1" type="button">Decision Logic</button>
+<button aria-controls="commandWorkspace" aria-selected="true" class="workspace-tab active" data-workspace-tab="commandWorkspace" id="commandTab" role="tab" tabindex="0" type="button">Command</button>
+<button aria-controls="rosterWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="rosterWorkspace" id="rosterTab" role="tab" tabindex="-1" type="button">Roster</button>
+<button aria-controls="missionWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="missionWorkspace" id="missionTab" role="tab" tabindex="-1" type="button">Mission</button>
+<button aria-controls="eventWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="eventWorkspace" id="eventTab" role="tab" tabindex="-1" type="button">Anomalies</button>
+<button aria-controls="logWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="logWorkspace" id="logTab" role="tab" tabindex="-1" type="button">Record</button>
+<button aria-controls="instructionsWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="instructionsWorkspace" id="instructionsTab" role="tab" tabindex="-1" type="button">Instructions</button>
+
 </nav><section aria-labelledby="commandTab" class="panel workspace-panel command-panel active" id="commandWorkspace" role="tabpanel">
 <div class="panel-heading">
 <div>
@@ -172,15 +173,8 @@
 <article class="instruction-card"><span class="logic-number">07</span><h3>Advance the battle</h3><p>Use <strong>Anomalies</strong> for random events, <strong>Battle Record</strong> for the log, and <strong>Start Next Turning Point</strong> to ready survivors and advance the turn.</p></article>
 <article class="instruction-card"><span class="logic-number">08</span><h3>Save the session</h3><p>The browser saves automatically. Use <strong>Export Save</strong> for a JSON backup and <strong>Import Save</strong> to restore it elsewhere.</p></article>
 </div>
-<div class="instruction-notes"><h3>Important tabletop notes</h3><ul><li>This is a decision and tracking aid. Use current datacards and official rules for visibility, cover, weapon rules, combat sequencing, and mission maps.</li><li>An NPO at 0 wounds is dimmed, marked with a skull, and removed from the activation queue.</li><li>Open <strong>Decision Logic</strong> for the AI principles and tie-break guidance.</li></ul></div>
-</section><section aria-labelledby="logicTab" class="panel workspace-panel logic-panel" hidden="" id="logicWorkspace" role="tabpanel">
-<div class="panel-heading compact">
-<div>
-<p class="eyebrow">AI REFERENCE</p>
-<h2>Decision Logic</h2>
-</div>
-</div>
-<div class="logic-grid">
+<div class="instruction-notes"><h3>Important tabletop notes</h3><ul><li>This is a decision and tracking aid. Use current datacards and official rules for visibility, cover, weapon rules, combat sequencing, and mission maps.</li><li>An NPO at 0 wounds is dimmed, marked with a skull, and removed from the activation queue.</li><li>The AI decision principles and tie-break guidance are included below in this Instructions tab.</li></ul></div>
+<section aria-labelledby="embeddedLogicHeading" class="embedded-logic"><div class="embedded-logic-heading"><p class="eyebrow">AI REFERENCE</p><h2 id="embeddedLogicHeading">How the Enemy AI Decides</h2><p class="section-copy">Use these principles whenever the app presents a choice that still needs a tabletop judgement.</p></div><div class="logic-grid">
 <article>
 <span class="logic-number">01</span>
 <h3>Queue the operative</h3>
@@ -201,8 +195,7 @@
 <h3>Resolve on the tabletop</h3>
 <p>The app provides order, movement, target, action sequence, and a visual attack roll. Apply defence and special rules from the datacards you are using.</p>
 </article>
-</div>
-</section></main>
+</div></section></section></main>
 <dialog class="modal" id="npoDialog">
 <form id="npoForm" method="dialog">
 <div class="modal-heading">
@@ -286,6 +279,6 @@
 <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
 <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
 </footer>
-<script src="app.js?v=6"></script>
+<script src="app.js?v=7"></script>
 </body>
 </html>

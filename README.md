@@ -4,8 +4,8 @@ A visual, static web app for running solo or cooperative Kill Team battles again
 
 ## Features
 
-- App-wide mobile-friendly tabs for Command, Roster, Mission, Anomalies, Battle Record, Instructions, and Decision Logic
-- Built-in Instructions tab covering setup, activation, visual dice, player attacks, wounds, events, and saves
+- App-wide mobile-friendly tabs for Command, Roster, Mission, Anomalies, Battle Record, and Instructions
+- Built-in Instructions tab covering setup, activation, visual dice, player attacks, wounds, events, saves, and the complete AI decision logic
 
 - A visible, locked **Next to Activate** NPO preview before you complete the Battlefield Snapshot
 - One-click **Activate Next Enemy** decision engine with visual attack dice, highlighted critical hits, normal hits, and misses
@@ -13,13 +13,14 @@ A visual, static web app for running solo or cooperative Kill Team battles again
 - Default Necron Warrior, Scarab Swarm, Macrocyte, and Tomb Crawler profiles
 - 2D6-style Necron roster and reinforcement generation
 - Threat level and threat grade tracker
-- Tabbed Mission Control, Tomb Anomalies, Battle Record, and Decision Logic tools for better mobile use
+- Tabbed Mission Control, Tomb Anomalies, and Battle Record tools for better mobile use
 - Six Tomb World mission-assistant presets with progress trackers
 - Random tomb events, including awakened Necrons, living metal repair, reanimation, shifting passages, and temporal effects
 - Player attack resolver that rolls NPO saves, applies AP and cover, calculates damage, and updates wounds automatically
 - Skull watermark on incapacitated NPO cards
 - Turning point and Strategy phase controls
 - Local browser saving, plus JSON import and export
+- Mobile session controls docked to the bottom of the screen
 - Responsive layout for a Windows PC, tablet, or phone
 - No build tools, frameworks, server, or external assets required
 

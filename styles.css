@@ -941,3 +941,22 @@ select, input[type="text"], input[type="number"], input:not([type]) {
   .number-stepper { grid-template-columns: minmax(0, 1fr) 40px 40px; gap: 5px; }
   .stepper-button { min-width: 40px; min-height: 42px; }
 }
+
+/* v12 save-result clarity */
+.save-roll-visual {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid rgba(97, 255, 173, .18);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, .14);
+}
+.save-roll-visual .eyebrow { margin: 0 0 8px; }
+.save-roll-visual .dice-tray { margin: 0; }
+.no-dice-result {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  color: var(--muted);
+  font-size: .78rem;
+  font-weight: 750;
+}

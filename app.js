@@ -651,6 +651,11 @@
 
   function renderRoster() {
     const active = state.npos.filter(n => n.wounds > 0);
+    const rosterTab = byId("rosterTab");
+    if (rosterTab) {
+      rosterTab.textContent = `Roster (${active.length})`;
+      rosterTab.setAttribute("aria-label", `Roster, ${active.length} active NPO${active.length === 1 ? "" : "s"}`);
+    }
     const ready = active.filter(n => n.ready);
     const totalWounds = active.reduce((sum, n) => sum + n.wounds, 0);
     els.rosterSummary.innerHTML = `
@@ -1336,7 +1341,12 @@
         <div><span class="event-tag">SAVE ROLL</span><h3>${escapeHtml(npo.name)}</h3></div>
         <strong class="damage-total">${outcome.damage} damage</strong>
       </div>
-      <div class="dice-tray save-dice">${renderDice(displayDice)}</div>
+      <div class="save-roll-visual">
+        <p class="eyebrow">NPO SAVE DICE</p>
+        <div class="dice-tray save-dice" aria-label="NPO save dice results">
+          ${displayDice.length ? renderDice(displayDice) : '<span class="no-dice-result">No save dice rolled</span>'}
+        </div>
+      </div>
       <div class="combat-breakdown">
         <span>${criticalSaves} critical save${criticalSaves === 1 ? "" : "s"}</span>
         <span>${normalSaves} normal save${normalSaves === 1 ? "" : "s"}${coverRetained ? " including cover" : ""}</span>

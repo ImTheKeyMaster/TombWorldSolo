@@ -10,7 +10,7 @@
 <title>Tomb World Solo Command</title>
 <link href="favicon.svg?v=19" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="styles.css?v=19" rel="stylesheet"/>
+<link href="styles-v20.css?v=20" rel="stylesheet"/>
 </head>
 <body>
 <div aria-hidden="true" class="ambient-grid"></div>
@@ -33,14 +33,13 @@
 </header>
 <main class="shell workspace-shell">
 <nav aria-label="Tomb World Solo Command sections" class="workspace-tabs" role="tablist">
-<button aria-controls="commandWorkspace" aria-selected="true" class="workspace-tab active" data-workspace-tab="commandWorkspace" id="commandTab" role="tab" tabindex="0" type="button">Command</button>
+<button aria-controls="missionWorkspace" aria-selected="true" class="workspace-tab active" data-workspace-tab="missionWorkspace" id="missionTab" role="tab" tabindex="0" type="button">Mission</button>
 <button aria-controls="rosterWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="rosterWorkspace" id="rosterTab" role="tab" tabindex="-1" type="button">Roster</button>
-<button aria-controls="missionWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="missionWorkspace" id="missionTab" role="tab" tabindex="-1" type="button">Mission</button>
+<button aria-controls="commandWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="commandWorkspace" id="commandTab" role="tab" tabindex="-1" type="button">Command</button>
 <button aria-controls="eventWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="eventWorkspace" id="eventTab" role="tab" tabindex="-1" type="button">Anomalies</button>
 <button aria-controls="logWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="logWorkspace" id="logTab" role="tab" tabindex="-1" type="button">Record</button>
 <button aria-controls="instructionsWorkspace" aria-selected="false" class="workspace-tab" data-workspace-tab="instructionsWorkspace" id="instructionsTab" role="tab" tabindex="-1" type="button">Instructions</button>
-
-</nav><section aria-labelledby="commandTab" class="panel workspace-panel command-panel active" id="commandWorkspace" role="tabpanel">
+</nav><section aria-labelledby="commandTab" aria-hidden="true" class="panel workspace-panel command-panel" hidden="" id="commandWorkspace" role="tabpanel">
 <div class="panel-heading">
 <div>
 <p class="eyebrow">ENEMY COMMAND CORE</p>
@@ -140,7 +139,7 @@
 </div>
 <div class="roster-summary" id="rosterSummary"></div>
 <div class="roster-grid" id="rosterGrid"></div>
-</section><section aria-labelledby="missionTab" class="panel workspace-panel focused-tool-panel" hidden="" id="missionWorkspace" role="tabpanel">
+</section><section aria-labelledby="missionTab" aria-hidden="false" class="panel workspace-panel focused-tool-panel active" id="missionWorkspace" role="tabpanel">
 <div class="panel-heading compact">
 <div>
 <p class="eyebrow">MISSION CONTROL</p>
@@ -330,6 +329,14 @@
 </form>
 </dialog>
 
+<div aria-atomic="true" aria-live="polite" class="action-feedback" id="actionFeedback" role="status" hidden>
+  <div class="action-feedback-icon" id="actionFeedbackDie"></div>
+  <div class="action-feedback-copy">
+    <strong id="actionFeedbackTitle">Action resolved</strong>
+    <span id="actionFeedbackText"></span>
+  </div>
+  <button aria-label="Dismiss action result" class="action-feedback-close" id="actionFeedbackClose" type="button">×</button>
+</div>
 <dialog class="strategy-overlay" id="strategyDialog">
   <div class="strategy-flow-shell">
     <p class="eyebrow">NPO STRATEGY PHASE</p>
@@ -366,6 +373,6 @@
 <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
 <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
 </footer>
-<script src="app-v18.js?v=18"></script>
+<script src="app-v20.js?v=20"></script>
 </body>
 </html>

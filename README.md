@@ -73,3 +73,9 @@ Kill Team, Necrons, Tomb World, and related names are trademarks or intellectual
 
 - Strategy Phase reinforcement dice now use framed green pip dice matching normal-hit results.
 - Added an iOS opening guard so the reinforcement entry-point menu remains closed when the Strategy Phase dialog appears.
+
+
+## Version 25
+
+- Mission changes now always create a fresh mission-appropriate NPO roster after resetting the game.
+- The roster replacement control is named **Regenerate NPO Roster** and asks for confirmation before deleting the current roster.

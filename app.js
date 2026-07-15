@@ -385,7 +385,7 @@
     });
     byId("clearSnapshotBtn").addEventListener("click", clearSnapshot);
     byId("addNpoBtn").addEventListener("click", () => openNpoDialog());
-    byId("generateRosterBtn").addEventListener("click", generateNecronRoster);
+    byId("generateRosterBtn").addEventListener("click", confirmRegenerateNecronRoster);
     byId("resetCampaignBtn").addEventListener("click", resetSession);
     byId("exportBtn").addEventListener("click", exportSave);
     els.importInput.addEventListener("change", importSave);
@@ -1290,10 +1290,13 @@
   function startNewGame(missionId = MISSIONS[0].id) {
     state = defaultState();
     state.missionId = missionId;
-    generateMissionStartingRoster(missionId, false);
     state.log = [];
+    const rosterResult = generateMissionStartingRoster(missionId, false, false);
     const mission = currentMission();
     addLog(`New game started: ${mission.name}.`);
+    addLog(rosterResult.count === 0
+      ? `${mission.name}: no starting NPOs are deployed (${rosterResult.rollText}).`
+      : `${mission.name}: generated a fresh roster of ${rosterResult.count} NPOs (${rosterResult.rollText}).`);
     syncSnapshotControls();
     ensureNextNpo();
     saveAndRender();
@@ -1307,7 +1310,7 @@
     requestMissionChange(next.id);
   }
 
-  function generateMissionStartingRoster(missionId = state.missionId, render = true) {
+  function generateMissionStartingRoster(missionId = state.missionId, render = true, logIt = true) {
     state.npos = [];
     state.lastActivation = null;
     state.nextNpoId = null;
@@ -1315,7 +1318,7 @@
     let count = 0;
     let rollText = "";
     if (missionId === "scout-sub-crypt") {
-      rollText = "Mission begins with no deployed NPOs";
+      rollText = "mission begins with no deployed NPOs";
     } else if (missionId === "destroy-sarcophagus") {
       const die = rollD3();
       count = die + 6;
@@ -1328,14 +1331,24 @@
     }
 
     for (let i = 0; i < count; i += 1) spawnRandomNecron(false);
-    addLog(count === 0
-      ? `${currentMission().name}: starting roster cleared because ${rollText.toLowerCase()}.`
-      : `${currentMission().name}: generated ${count} starting NPOs (${rollText}).`);
+    if (logIt) {
+      const mission = MISSIONS.find(m => m.id === missionId) || currentMission();
+      addLog(count === 0
+        ? `${mission.name}: starting roster cleared because the ${rollText}.`
+        : `${mission.name}: generated ${count} starting NPOs (${rollText}).`);
+    }
     if (render) saveAndRender();
+    return { count, rollText };
   }
 
-  function generateNecronRoster() {
-    generateMissionStartingRoster(state.missionId, true);
+  function confirmRegenerateNecronRoster() {
+    const mission = currentMission();
+    const currentCount = state.npos.length;
+    const message = currentCount > 0
+      ? `Regenerate the NPO roster for ${mission.name}? This will permanently remove all ${currentCount} current roster entries and create a new mission-appropriate starting roster.`
+      : `Generate a mission-appropriate NPO roster for ${mission.name}?`;
+    if (!window.confirm(message)) return;
+    generateMissionStartingRoster(state.missionId, true, true);
   }
 
   function spawnRandomNecron(logIt = true) {

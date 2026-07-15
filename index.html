@@ -10,7 +10,7 @@
 <title>Tomb World Solo Command</title>
 <link href="favicon.svg?v=19" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="styles-v20.css?v=21" rel="stylesheet"/>
+<link href="styles.css?v=22" rel="stylesheet"/>
 </head>
 <body>
 <div aria-hidden="true" class="ambient-grid"></div>
@@ -24,11 +24,6 @@
 <h1>Tomb World Solo Command</h1>
 <p class="hero-copy">Run Necron non-player operatives, resolve activations, track threat, and manage narrative mission events through focused battle tabs.</p>
 </div>
-</div>
-<div aria-label="Session controls" class="hero-actions">
-<button class="button ghost" id="resetCampaignBtn" type="button">Reset Session</button>
-<button class="button secondary" id="exportBtn" type="button">Export Save</button>
-<label class="button secondary file-button">Import Save<input accept="application/json" id="importInput" type="file"/></label>
 </div>
 </header>
 <main class="shell workspace-shell">
@@ -122,8 +117,15 @@
 </div>
 </article>
 <div class="command-footer">
-<button class="button secondary" id="strategyBtn" type="button">Resolve NPO Strategy Phase</button>
-<button class="button ghost" id="newTurnBtn" type="button">Manual: Start Next Turning Point</button>
+<button class="button secondary" id="strategyBtn" type="button">Start Next Turning Point</button>
+</div>
+<div aria-label="Session controls" class="command-session-controls">
+<p class="eyebrow">SESSION CONTROLS</p>
+<div class="command-session-actions">
+<button class="button ghost" id="resetCampaignBtn" type="button">Reset Session</button>
+<button class="button secondary" id="exportBtn" type="button">Export Save</button>
+<label class="button secondary file-button">Import Save<input accept="application/json" id="importInput" type="file"/></label>
+</div>
 </div>
 </section><section aria-labelledby="rosterTab" class="panel workspace-panel roster-panel" hidden="" id="rosterWorkspace" role="tabpanel">
 <div class="panel-heading roster-heading">
@@ -143,7 +145,7 @@
 <div class="panel-heading compact">
 <div>
 <p class="eyebrow">MISSION CONTROL</p>
-<h2 id="missionHeading">Mission</h2>
+<h2 id="missionHeading" tabindex="-1">Mission</h2>
 </div>
 <button aria-label="Random mission" class="icon-button" id="randomMissionBtn" title="Random mission" type="button">⚄</button>
 </div>
@@ -180,7 +182,7 @@
 <article class="instruction-card"><span class="logic-number">04</span><h3>Activate the NPO</h3><p>Press <strong>Activate Next NPO</strong>. Follow the order, movement, target priority, action sequence, and visual attack roll shown by the app.</p></article>
 <article class="instruction-card"><span class="logic-number">05</span><h3>Read the dice</h3><p>Dice use normal pip faces. Gold is a critical hit or save, green is a normal hit or save, and dim gray is a miss.</p><div class="dice-key"><span class="key-chip critical-key">Critical</span><span class="key-chip hit-key">Hit / Save</span><span class="key-chip miss-key">Miss</span></div></article>
 <article class="instruction-card"><span class="logic-number">06</span><h3>Resolve an enemy attack</h3><p>Open <strong>Roster</strong> and select <strong>Resolve Enemy Attack</strong> on the target. Enter retained hits, damage, NPO Defense Dice, NPO AP reduction, and cover. The app rolls saves and updates wounds.</p></article>
-<article class="instruction-card"><span class="logic-number">07</span><h3>Advance the battle</h3><p>Threat increases automatically when NPOs Shoot or Fight, when confirmed enemy actions trigger it, and when Operate Hatch or Breach checks succeed. Use <strong>Resolve NPO Strategy Phase</strong> to advance the Turning Point, ready survivors, generate reinforcements, check events, and record the result. The manual Turning Point button is only a fallback.</p></article>
+<article class="instruction-card"><span class="logic-number">07</span><h3>Advance the battle</h3><p>Threat increases automatically when NPOs Shoot or Fight, when confirmed enemy actions trigger it, and when Operate Hatch or Breach checks succeed. Use <strong>Start Next Turning Point</strong> to advance the counter, ready survivors, generate reinforcements, check events, and record the result.</p></article>
 <article class="instruction-card"><span class="logic-number">08</span><h3>Save the session</h3><p>The browser saves automatically. Use <strong>Export Save</strong> for a JSON backup and <strong>Import Save</strong> to restore it elsewhere.</p></article>
 </div>
 <div class="instruction-notes"><h3>Important tabletop notes</h3><ul><li>This is a decision and tracking aid. Use current datacards and official rules for visibility, cover, weapon rules, combat sequencing, and mission maps.</li><li>An NPO at 0 wounds is dimmed, marked with a skull, and removed from the activation queue.</li><li>The AI decision principles and tie-break guidance are included below in this Instructions tab.</li></ul></div>
@@ -390,6 +392,6 @@
 <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
 <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
 </footer>
-<script src="app-v21.js?v=21"></script>
+<script src="app.js?v=22"></script>
 </body>
 </html>

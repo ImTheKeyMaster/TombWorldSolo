@@ -2,6 +2,7 @@
   "use strict";
 
   const STORAGE_KEY = "tomb-world-solo-command-v1";
+  let pendingMissionChange = null;
 
   const NPO_TEMPLATES = {
     "Necron Warrior": {
@@ -292,14 +293,20 @@
   });
 
   let state = loadState();
+  let pendingEnemyAttack = null;
 
   const els = {
     turnNumber: byId("turnNumber"),
     threatValue: byId("threatValue"),
     threatGrade: byId("threatGrade"),
     threatSlider: byId("threatSlider"),
+    threatMeterFill: byId("threatMeterFill"),
+    threatStatus: byId("threatStatus"),
     missionSelect: byId("missionSelect"),
     missionCard: byId("missionCard"),
+    missionChangeDialog: byId("missionChangeDialog"),
+    missionChangeTitle: byId("missionChangeTitle"),
+    missionChangeSummary: byId("missionChangeSummary"),
     eventCard: byId("eventCard"),
     activityLog: byId("activityLog"),
     rosterGrid: byId("rosterGrid"),
@@ -330,6 +337,10 @@
     mapDialog: byId("mapDialog"),
     mapDialogTitle: byId("mapDialogTitle"),
     mapDialogContent: byId("mapDialogContent"),
+    strategyDialog: byId("strategyDialog"),
+    strategyDialogTitle: byId("strategyDialogTitle"),
+    strategyFlowSteps: byId("strategyFlowSteps"),
+    strategySpawnLocation: byId("strategySpawnLocation"),
     importInput: byId("importInput")
   };
 
@@ -339,6 +350,7 @@
     populateMissionSelect();
     syncSnapshotControls();
     bindEvents();
+    applyThreatReadiness(state.threat, state.threat);
     ensureNextNpo();
     saveState();
     renderAll();
@@ -347,8 +359,12 @@
   function bindEvents() {
     byId("activateBtn").addEventListener("click", activateNextEnemy);
     byId("strategyBtn").addEventListener("click", resolveStrategyPhase);
-    byId("newTurnBtn").addEventListener("click", startNextTurn);
+    byId("closeStrategyBtn").addEventListener("click", closeStrategyFlow);
+    els.strategySpawnLocation.addEventListener("change", updateStrategySpawnLocation);
     byId("eventBtn").addEventListener("click", drawRandomEvent);
+    byId("enemyHatchBtn").addEventListener("click", recordOperateHatch);
+    byId("enemyBreachBtn").addEventListener("click", recordBreach);
+    byId("actionFeedbackClose").addEventListener("click", hideActionFeedback);
     byId("randomMissionBtn").addEventListener("click", randomMission);
     byId("clearLogBtn").addEventListener("click", () => {
       state.log = [];
@@ -359,9 +375,14 @@
     els.threatSlider.addEventListener("input", e => setThreat(Number(e.target.value), false));
     els.threatSlider.addEventListener("change", saveAndRender);
     els.missionSelect.addEventListener("change", e => {
-      state.missionId = e.target.value;
-      addLog(`Mission selected: ${currentMission().name}.`);
-      saveAndRender();
+      requestMissionChange(e.target.value);
+    });
+    byId("cancelMissionChangeBtn").addEventListener("click", cancelMissionChange);
+    byId("keepMissionRosterBtn").addEventListener("click", () => confirmMissionChange(false));
+    byId("generateMissionRosterBtn").addEventListener("click", () => confirmMissionChange(true));
+    els.missionChangeDialog.addEventListener("cancel", event => {
+      event.preventDefault();
+      cancelMissionChange();
     });
     byId("clearSnapshotBtn").addEventListener("click", clearSnapshot);
     byId("addNpoBtn").addEventListener("click", () => openNpoDialog());
@@ -374,6 +395,14 @@
     els.attackForm.addEventListener("submit", resolvePlayerAttack);
     els.attackDialog.addEventListener("click", handleNumberStepper);
     els.attackDialog.addEventListener("change", clampNumberInput);
+    els.attackDialog.addEventListener("cancel", event => {
+      event.preventDefault();
+      pendingEnemyAttack = null;
+      els.attackDialog.close();
+    });
+    els.attackDialog.addEventListener("close", () => {
+      pendingEnemyAttack = null;
+    });
     byId("closeMapBtn").addEventListener("click", () => els.mapDialog.close());
     els.mapDialog.addEventListener("click", event => {
       if (event.target === els.mapDialog) els.mapDialog.close();
@@ -453,8 +482,11 @@
   function renderAll() {
     els.turnNumber.textContent = String(state.turn);
     els.threatValue.textContent = String(state.threat);
-    els.threatGrade.textContent = `Grade ${threatGrade(state.threat)}`;
+    const currentGrade = threatGrade(state.threat);
+    els.threatGrade.textContent = `Grade ${currentGrade}`;
     els.threatSlider.value = String(state.threat);
+    els.threatMeterFill.style.width = `${(state.threat / 15) * 100}%`;
+    els.threatStatus.textContent = threatStatusText(state.threat);
     els.missionSelect.value = state.missionId;
     renderMission();
     renderEvent();
@@ -681,7 +713,7 @@
           ${npo.wounds <= 0 ? '<span class="skull-watermark" aria-label="Incapacitated">☠</span>' : ""}
           <div class="npo-head">
             <div>
-              <h3 class="npo-name">${escapeHtml(npo.name)}</h3>
+              <h3 class="npo-name">${escapeHtml(npo.name)}${npo.isNew ? ' <span class="new-npo-badge">NEW</span>' : ""}</h3>
               <div class="npo-type">${escapeHtml(npo.type)} · Move ${npo.move || "?"}&quot; · Save ${escapeHtml(npo.save || "?")}</div>
             </div>
             <span class="behavior-pill">${escapeHtml(BEHAVIOR_LABELS[npo.behavior] || npo.behavior)}</span>
@@ -827,6 +859,8 @@
     if (!selected) return;
     const result = resolveBehavior(selected, state.snapshot);
     result.attackRoll = rollNpoAttack(selected, result);
+    const automaticThreatActions = result.actions.filter(action => action.title === "Shoot" || action.title === "Fight");
+    automaticThreatActions.forEach(action => increaseThreat(1, `${selected.name} performed ${action.title}`));
     selected.ready = false;
     selected.activations = (selected.activations || 0) + 1;
     state.nextNpoId = null;
@@ -1030,37 +1064,112 @@
 
   function resolveStrategyPhase() {
     captureSnapshot();
-    const grade = threatGrade(state.threat);
-    const afterFirst = state.turn > 1;
-    const messages = [];
 
-    if (afterFirst && grade === 3) {
+    // A completed Strategy Phase starts the next Turning Point.
+    state.turn += 1;
+    state.event = null;
+    state.lastActivation = null;
+    state.npos.forEach(npo => {
+      npo.isNew = false;
+      if (npo.wounds > 0) npo.ready = state.threat > 0;
+    });
+
+    const grade = threatGrade(state.threat);
+    const activeBefore = state.npos.filter(npo => npo.wounds > 0).length;
+    const availableSlots = Math.max(0, 10 - activeBefore);
+    const requested = grade;
+    const spawnCount = Math.min(requested, availableSlots);
+    const spawned = [];
+
+    for (let i = 0; i < spawnCount; i += 1) {
+      const result = spawnRandomNecron(false);
+      result.npo.ready = state.threat > 0;
+      result.npo.isNew = true;
+      result.npo.spawnLocation = "Mission-defined entry point";
+      spawned.push(result);
+    }
+
+    const events = [];
+    if (grade === 3) {
       const drawCount = state.threat === 15 ? 2 : 1;
       for (let i = 0; i < drawCount; i += 1) {
-        const event = applyEvent(randomItem(EVENTS), false);
-        messages.push(event.name);
+        events.push(applyEvent(randomItem(EVENTS), false));
       }
     }
 
-    if (afterFirst && grade > 0) {
-      const availableSlots = Math.max(0, 10 - state.npos.filter(n => n.wounds > 0).length);
-      const count = Math.min(grade, availableSlots);
-      for (let i = 0; i < count; i += 1) spawnRandomNecron();
-      if (count) messages.push(`${count} reinforcement${count === 1 ? "" : "s"}`);
-    }
+    const readied = state.npos.filter(npo => npo.wounds > 0 && npo.ready && !npo.isNew).length;
+    state.strategyResult = {
+      turn: state.turn,
+      threat: state.threat,
+      grade,
+      readied,
+      requested,
+      spawnCount,
+      blocked: Math.max(0, requested - spawnCount),
+      spawned: spawned.map(item => ({ id: item.npo.id, name: item.npo.name, type: item.npo.type, roll: item.roll, dice: item.dice })),
+      events: events.map(event => event.name),
+      location: "Mission-defined entry point"
+    };
 
-    if (!messages.length) {
-      addLog(`Strategy phase resolved at threat grade ${grade}. No automatic event or reinforcement was required.`);
+    addLog(`Turning Point ${state.turn} began. ${readied} surviving NPO${readied === 1 ? " was" : "s were"} readied.`);
+    if (spawned.length) {
+      addLog(`${spawned.length} reinforcement${spawned.length === 1 ? "" : "s"} generated at the mission-defined entry point: ${spawned.map(item => `${item.npo.name} (2D6 roll ${item.roll})`).join(", ")}.`);
+    } else if (requested > 0 && availableSlots === 0) {
+      addLog(`No reinforcements arrived because the 10-active-NPO battlefield limit was reached.`);
+    } else if (requested > 0) {
+      addLog(`Only ${spawnCount} of ${requested} reinforcement slots were available under the 10-active-NPO limit.`);
     } else {
-      addLog(`Strategy phase resolved: ${messages.join(", ")}.`);
+      addLog(`Threat Grade 0 generated no reinforcements.`);
     }
+    if (events.length) addLog(`Tomb World event${events.length === 1 ? "" : "s"} resolved: ${events.map(event => event.name).join(", ")}.`);
+    else addLog(`No automatic Tomb World event was required.`);
+
     saveAndRender();
+    showStrategyFlow();
+  }
+
+  function showStrategyFlow() {
+    const result = state.strategyResult;
+    if (!result) return;
+    els.strategyDialogTitle.textContent = `Turning Point ${result.turn}`;
+    els.strategySpawnLocation.value = result.location || "Mission-defined entry point";
+    const spawnedMarkup = result.spawned.length
+      ? `<ul class="strategy-spawn-list">${result.spawned.map(item => `<li><span class="strategy-dice">${(item.dice || []).map(value => renderDieFace(value, "normal")).join("")}</span><strong>${escapeHtml(item.name)}</strong><small>2D6 result ${item.roll}</small></li>`).join("")}</ul>`
+      : `<p class="strategy-empty">No reinforcements generated.</p>`;
+    const eventText = result.events.length ? result.events.map(escapeHtml).join(", ") : "None";
+    els.strategyFlowSteps.innerHTML = `
+      <div class="strategy-step complete"><span>✓</span><div><strong>Turning Point advanced</strong><small>Turning Point ${result.turn}</small></div></div>
+      <div class="strategy-step complete"><span>✓</span><div><strong>NPOs readied</strong><small>${result.readied} surviving NPO${result.readied === 1 ? "" : "s"} ready for activation</small></div></div>
+      <div class="strategy-step complete"><span>✓</span><div><strong>Threat response checked</strong><small>Threat ${result.threat} · Grade ${result.grade}</small></div></div>
+      <div class="strategy-step ${result.spawnCount ? "complete" : "muted-step"}"><span>${result.spawnCount ? "✓" : "–"}</span><div><strong>Reinforcements</strong><small>${result.spawnCount} generated${result.blocked ? ` · ${result.blocked} blocked by battlefield limit` : ""}</small>${spawnedMarkup}</div></div>
+      <div class="strategy-step ${result.events.length ? "complete" : "muted-step"}"><span>${result.events.length ? "✓" : "–"}</span><div><strong>Tomb World events</strong><small>${eventText}</small></div></div>`;
+    els.strategyDialog.showModal();
+  }
+
+  function updateStrategySpawnLocation() {
+    if (!state.strategyResult) return;
+    const location = els.strategySpawnLocation.value;
+    state.strategyResult.location = location;
+    state.strategyResult.spawned.forEach(item => {
+      const npo = state.npos.find(candidate => candidate.id === item.id);
+      if (npo) npo.spawnLocation = location;
+    });
+    saveState();
+  }
+
+  function closeStrategyFlow() {
+    if (state.strategyResult?.spawned?.length) {
+      addLog(`Reinforcement entry point confirmed: ${state.strategyResult.location}.`);
+      saveAndRender();
+    }
+    els.strategyDialog.close();
   }
 
   function startNextTurn() {
     state.turn += 1;
     state.npos.forEach(n => {
-      if (n.wounds > 0) n.ready = true;
+      n.isNew = false;
+      if (n.wounds > 0) n.ready = state.threat > 0;
     });
     state.event = null;
     state.lastActivation = null;
@@ -1105,35 +1214,137 @@
     return applied;
   }
 
+  function missionRosterRule(missionId) {
+    if (missionId === "scout-sub-crypt") {
+      return { label: "No starting NPOs", description: "This mission begins with no deployed NPOs. NPOs awaken as unexplored rooms are opened or entered." };
+    }
+    if (missionId === "destroy-sarcophagus") {
+      return { label: "D3 + 6 starting NPOs", description: "Generate 7–9 starting NPOs using one D3 roll plus six." };
+    }
+    return { label: "2D3 + 3 starting NPOs", description: "Generate 5–9 starting NPOs using two D3 rolls plus three." };
+  }
+
+  function moveFocusAwayFromMissionSelect() {
+    els.missionSelect.blur();
+    window.setTimeout(() => {
+      const target = byId("missionHeading");
+      if (target) target.focus({ preventScroll: true });
+    }, 0);
+  }
+
+  function requestMissionChange(missionId) {
+    if (!MISSIONS.some(m => m.id === missionId) || missionId === state.missionId) {
+      els.missionSelect.value = state.missionId;
+      return;
+    }
+
+    const target = MISSIONS.find(m => m.id === missionId);
+    const activeCount = state.npos.filter(n => n.wounds > 0).length;
+    const totalCount = state.npos.length;
+
+    if (totalCount === 0) {
+      applyMissionChange(missionId, false);
+      return;
+    }
+
+    pendingMissionChange = { missionId, previousMissionId: state.missionId };
+    const rule = missionRosterRule(missionId);
+    els.missionChangeTitle.textContent = `Change to ${target.name}?`;
+    els.missionChangeSummary.innerHTML = `
+      <p>The current roster contains <strong>${activeCount} active NPO${activeCount === 1 ? "" : "s"}</strong> and ${totalCount} total roster entr${totalCount === 1 ? "y" : "ies"}.</p>
+      <div class="mission-roster-requirement">
+        <span class="eyebrow">NEW MISSION SETUP</span>
+        <strong>${escapeHtml(rule.label)}</strong>
+        <p>${escapeHtml(rule.description)}</p>
+      </div>
+      <p class="muted">Keeping the current roster is useful when you are only reviewing the mission. Generating a mission roster replaces the existing roster and cannot be undone unless you exported a save.</p>
+    `;
+    byId("generateMissionRosterBtn").textContent = missionId === "scout-sub-crypt" ? "Clear Roster for Mission" : "Generate Mission Roster";
+    els.missionSelect.blur();
+    els.missionChangeDialog.showModal();
+  }
+
+  function cancelMissionChange() {
+    els.missionSelect.blur();
+    if (els.missionChangeDialog.open) els.missionChangeDialog.close();
+    els.missionSelect.value = state.missionId;
+    pendingMissionChange = null;
+    moveFocusAwayFromMissionSelect();
+  }
+
+  function confirmMissionChange(generateRoster) {
+    if (!pendingMissionChange) return;
+    const missionId = pendingMissionChange.missionId;
+    els.missionSelect.blur();
+    if (els.missionChangeDialog.open) els.missionChangeDialog.close();
+    pendingMissionChange = null;
+    applyMissionChange(missionId, generateRoster);
+    moveFocusAwayFromMissionSelect();
+  }
+
+  function applyMissionChange(missionId, generateRoster) {
+    state.missionId = missionId;
+    const mission = currentMission();
+    if (generateRoster) generateMissionStartingRoster(missionId, false);
+    addLog(`Mission selected: ${mission.name}.${generateRoster ? " Starting NPO roster updated for this mission." : " Current NPO roster retained."}`);
+    saveAndRender();
+  }
+
   function randomMission() {
     let next = randomItem(MISSIONS);
     if (MISSIONS.length > 1 && next.id === state.missionId) {
       next = MISSIONS[(MISSIONS.findIndex(m => m.id === next.id) + 1) % MISSIONS.length];
     }
-    state.missionId = next.id;
-    addLog(`Random mission selected: ${next.name}.`);
-    saveAndRender();
+    requestMissionChange(next.id);
+  }
+
+  function rollD3() {
+    return Math.ceil(randomInt(1, 6) / 2);
+  }
+
+  function generateMissionStartingRoster(missionId = state.missionId, render = true) {
+    state.npos = [];
+    state.lastActivation = null;
+    state.nextNpoId = null;
+
+    let count = 0;
+    let rollText = "";
+    if (missionId === "scout-sub-crypt") {
+      rollText = "Mission begins with no deployed NPOs";
+    } else if (missionId === "destroy-sarcophagus") {
+      const die = rollD3();
+      count = die + 6;
+      rollText = `D3 roll ${die} + 6`;
+    } else {
+      const dieOne = rollD3();
+      const dieTwo = rollD3();
+      count = dieOne + dieTwo + 3;
+      rollText = `2D3 rolls ${dieOne} and ${dieTwo} + 3`;
+    }
+
+    for (let i = 0; i < count; i += 1) spawnRandomNecron(false);
+    addLog(count === 0
+      ? `${currentMission().name}: starting roster cleared because ${rollText.toLowerCase()}.`
+      : `${currentMission().name}: generated ${count} starting NPOs (${rollText}).`);
+    if (render) saveAndRender();
   }
 
   function generateNecronRoster() {
-    const count = randomInt(5, 9);
-    state.npos = [];
-    for (let i = 0; i < count; i += 1) spawnRandomNecron(false);
-    state.lastActivation = null;
-    addLog(`Generated a ${count}-operative Tomb World roster using a 2D6-style distribution.`);
-    saveAndRender();
+    generateMissionStartingRoster(state.missionId, true);
   }
 
   function spawnRandomNecron(logIt = true) {
-    const roll = randomInt(1, 6) + randomInt(1, 6);
+    const dieOne = randomInt(1, 6);
+    const dieTwo = randomInt(1, 6);
+    const roll = dieOne + dieTwo;
     let type;
     if (roll <= 3) type = "Canoptek Scarab Swarm";
     else if (roll <= 6) type = "Canoptek Macrocyte";
     else if (roll <= 10) type = "Necron Warrior";
     else type = "Canoptek Tomb Crawler";
     const npo = addNpoFromType(type, false);
-    if (logIt) addLog(`${npo.name} phased into the killzone as a reinforcement.`);
-    return npo;
+    if (logIt) addLog(`${npo.name} phased into the killzone as a reinforcement (2D6 roll ${roll}).`);
+    return { npo, roll, dice: [dieOne, dieTwo] };
   }
 
   function addNpoFromType(type, ready = true) {
@@ -1262,9 +1473,11 @@
   }
 
   function openAttackDialog(npo) {
+    pendingEnemyAttack = null;
     els.attackTargetId.value = npo.id;
     els.attackDialogTitle.textContent = `Attack ${npo.name}`;
     els.attackTargetStatus.innerHTML = `<strong>${escapeHtml(npo.name)}</strong><span>${npo.wounds} / ${npo.maxWounds} wounds · Save ${escapeHtml(npo.save || "4+")}</span>`;
+    byId("enemyAttackType").value = "shoot";
     byId("playerNormalHits").value = 0;
     byId("playerCritHits").value = 0;
     byId("playerNormalDamage").value = 3;
@@ -1274,7 +1487,8 @@
     byId("retainCoverSave").checked = false;
     els.combatResultPreview.innerHTML = `<p class="muted">Enter the enemy attack result, then roll the NPO's saves.</p>`;
     els.resolveAttackBtn.disabled = false;
-    els.resolveAttackBtn.textContent = "Roll Saves & Apply Damage";
+    els.resolveAttackBtn.textContent = "Roll Saves & Preview Damage";
+    els.resolveAttackBtn.dataset.phase = "roll";
     els.attackDialog.showModal();
   }
 
@@ -1305,12 +1519,34 @@
   function resolvePlayerAttack(event) {
     event.preventDefault();
     if (event.submitter?.value === "cancel") {
+      pendingEnemyAttack = null;
       els.attackDialog.close();
       return;
     }
-    const npo = state.npos.find(n => n.id === els.attackTargetId.value);
-    if (!npo || npo.wounds <= 0 || els.resolveAttackBtn.disabled) return;
 
+    if (els.resolveAttackBtn.dataset.phase === "confirm") {
+      const pending = pendingEnemyAttack;
+      const npo = pending ? state.npos.find(n => n.id === pending.npoId) : null;
+      if (!pending || !npo) {
+        pendingEnemyAttack = null;
+        els.attackDialog.close();
+        return;
+      }
+
+      npo.wounds = pending.afterWounds;
+      if (npo.wounds === 0) npo.ready = false;
+      if (pending.threatIncrease > 0) increaseThreat(pending.threatIncrease, pending.threatReason, false);
+      addLog(`${npo.name} rolled ${pending.criticalSaves} critical and ${pending.normalSaves} normal saves, suffered ${pending.damage} damage, and fell from ${pending.beforeWounds} to ${npo.wounds} wounds.${pending.threatIncrease ? ` Threat +${pending.threatIncrease}.` : ""}`);
+      pendingEnemyAttack = null;
+      els.attackDialog.close();
+      saveAndRender();
+      return;
+    }
+
+    const npo = state.npos.find(n => n.id === els.attackTargetId.value);
+    if (!npo || npo.wounds <= 0) return;
+
+    const attackType = byId("enemyAttackType").value;
     const normalHits = Math.max(0, Number(byId("playerNormalHits").value || 0));
     const critHits = Math.max(0, Number(byId("playerCritHits").value || 0));
     const normalDamage = Math.max(1, Number(byId("playerNormalDamage").value || 1));
@@ -1331,8 +1567,18 @@
     const normalSaves = saves.filter(d => d.kind === "hit").length + coverRetained;
     const outcome = calculateOptimalDamage({ normalHits, critHits, normalDamage, critDamage, normalSaves, criticalSaves });
     const before = npo.wounds;
-    npo.wounds = Math.max(0, npo.wounds - outcome.damage);
-    if (npo.wounds === 0) npo.ready = false;
+    const after = Math.max(0, before - outcome.damage);
+
+    pendingEnemyAttack = {
+      npoId: npo.id,
+      beforeWounds: before,
+      afterWounds: after,
+      damage: outcome.damage,
+      criticalSaves,
+      normalSaves,
+      threatIncrease: attackThreatIncrease(attackType, outcome.damage),
+      threatReason: attackThreatReason(attackType, npo.name)
+    };
 
     const displayDice = [...saves];
     if (coverRetained) displayDice.push({ value: "C", kind: "cover", label: "Retained cover save" });
@@ -1352,17 +1598,15 @@
         <span>${normalSaves} normal save${normalSaves === 1 ? "" : "s"}${coverRetained ? " including cover" : ""}</span>
         <span>${outcome.remainingCrits} critical and ${outcome.remainingNormals} normal hit${outcome.remainingNormals === 1 ? "" : "s"} get through</span>
       </div>
-      <div class="wound-change ${npo.wounds === 0 ? "killed" : ""}">
-        <strong>${before} → ${npo.wounds} wounds</strong>
-        <span>${npo.wounds === 0 ? "NPO incapacitated" : `${npo.wounds} wounds remaining`}</span>
-      </div>`;
+      <div class="wound-change ${after === 0 ? "killed" : ""}">
+        <strong>${before} → ${after} wounds</strong>
+        <span>${after === 0 ? "NPO will be incapacitated" : `${after} wounds will remain`}</span>
+      </div>
+      <p class="form-note">Damage is only applied after you select Confirm Damage. Cancel leaves the NPO unchanged.${pendingEnemyAttack.threatIncrease ? ` Confirming will also increase Threat by ${pendingEnemyAttack.threatIncrease}.` : ""}</p>`;
 
-    addLog(`${npo.name} rolled ${criticalSaves} critical and ${normalSaves} normal saves, suffered ${outcome.damage} damage, and fell from ${before} to ${npo.wounds} wounds.`);
-    els.resolveAttackBtn.disabled = true;
-    els.resolveAttackBtn.textContent = "Damage Applied";
-    saveState();
-    renderRoster();
-    renderLog();
+    els.resolveAttackBtn.disabled = false;
+    els.resolveAttackBtn.textContent = "Confirm Damage";
+    els.resolveAttackBtn.dataset.phase = "confirm";
   }
 
   function calculateOptimalDamage({ normalHits, critHits, normalDamage, critDamage, normalSaves, criticalSaves }) {
@@ -1449,15 +1693,107 @@
     };
   }
 
+  function increaseThreat(amount, reason, render = true) {
+    const before = state.threat;
+    state.threat = Math.max(0, Math.min(15, before + Number(amount || 0)));
+    applyThreatReadiness(before, state.threat);
+    const actual = state.threat - before;
+    if (actual > 0) addLog(`Threat ${before} → ${state.threat}: ${reason}.`);
+    if (render) saveAndRender();
+    return actual;
+  }
+
+  let actionFeedbackTimer = null;
+
+  function showActionFeedback(title, text, roll, tone = "neutral") {
+    const feedback = byId("actionFeedback");
+    byId("actionFeedbackTitle").textContent = title;
+    byId("actionFeedbackText").textContent = text;
+    byId("actionFeedbackDie").innerHTML = renderDieFace(roll, tone === "success" ? "save" : tone === "warning" ? "crit" : "miss");
+    feedback.dataset.tone = tone;
+    feedback.hidden = false;
+    feedback.classList.remove("show");
+    requestAnimationFrame(() => feedback.classList.add("show"));
+    clearTimeout(actionFeedbackTimer);
+    actionFeedbackTimer = setTimeout(hideActionFeedback, 13000);
+  }
+
+  function hideActionFeedback() {
+    const feedback = byId("actionFeedback");
+    if (!feedback) return;
+    feedback.classList.remove("show");
+    clearTimeout(actionFeedbackTimer);
+    setTimeout(() => { if (!feedback.classList.contains("show")) feedback.hidden = true; }, 180);
+  }
+
+  function recordOperateHatch() {
+    const before = state.threat;
+    const roll = randomInt(1, 6);
+    const increased = roll >= 4 ? increaseThreat(1, `Enemy operative used Operate Hatch and rolled ${roll}`, false) : 0;
+    if (!increased) addLog(`Enemy operative used Operate Hatch and rolled ${roll}. Threat did not increase.`);
+    saveAndRender();
+    const result = increased
+      ? `Rolled ${roll}. Threat increased ${before} → ${state.threat}.`
+      : `Rolled ${roll}. No Threat increase.`;
+    showActionFeedback("Operate Hatch resolved", result, roll, increased ? "success" : "neutral");
+  }
+
+  function recordBreach() {
+    const before = state.threat;
+    const roll = randomInt(1, 6);
+    const amount = 1 + (roll >= 4 ? 1 : 0);
+    const actual = increaseThreat(amount, `Enemy operative used Breach and rolled ${roll}`, false);
+    if (actual < amount) addLog(`Threat is already at its maximum; only ${actual} of the ${amount} increase was applied.`);
+    saveAndRender();
+    const extra = roll >= 4 ? " The 4+ check added a second point." : " The 4+ check did not add a second point.";
+    const cap = actual < amount ? " Threat was capped at 15." : "";
+    showActionFeedback("Breach resolved", `Rolled ${roll}. Threat increased ${before} → ${state.threat}.${extra}${cap}`, roll, roll >= 4 ? "warning" : "success");
+  }
+
+  function attackThreatIncrease(type, damage) {
+    if (type === "shoot") return 1;
+    if (type === "fight") return 1;
+    if (type === "other" && damage > 0) return 1;
+    return 0;
+  }
+
+  function attackThreatReason(type, npoName) {
+    if (type === "shoot") return `Enemy operative performed a non-Silent Shoot action against ${npoName}`;
+    if (type === "fight") return `Enemy operative performed a Fight action against ${npoName}`;
+    if (type === "other") return `Enemy operative used another action that damaged ${npoName}`;
+    return `Enemy operative used a Silent weapon against ${npoName}`;
+  }
+
+  function threatStatusText(level) {
+    const grade = threatGrade(level);
+    const next = grade === 0 ? 1 : grade === 1 ? 6 : grade === 2 ? 11 : null;
+    const reinforcement = grade === 0 ? "No reinforcements" : `${grade} reinforcement${grade === 1 ? "" : "s"} after the first turning point`;
+    const events = grade === 3 ? "Tomb World events are active" : "No automatic event cards";
+    if (level === 0) return "Dormant. NPOs cannot be readied until Threat rises above 0.";
+    const nextText = next ? ` Next grade at ${next} (${next - level} Threat away).` : " Maximum response grade.";
+    return `${reinforcement}. ${events}.${nextText}`;
+  }
+
+  function applyThreatReadiness(before, after) {
+    if (after === 0) {
+      state.npos.forEach(npo => { if (npo.wounds > 0) npo.ready = false; });
+      state.nextNpoId = null;
+    } else if (before === 0 && after > 0) {
+      state.npos.forEach(npo => { if (npo.wounds > 0) npo.ready = true; });
+    }
+  }
+
   function setThreat(value, render = true) {
+    const before = state.threat;
     state.threat = Math.max(0, Math.min(15, Number(value)));
+    applyThreatReadiness(before, state.threat);
     if (render) saveAndRender();
   }
 
   function threatGrade(level) {
     if (level >= 11) return 3;
-    if (level >= 7) return 2;
-    if (level >= 3) return 1;
+    if (level >= 6) return 2;
+    if (level >= 1) return 1;
     return 0;
   }
 
@@ -1511,6 +1847,7 @@
   }
 
   function saveAndRender() {
+    applyThreatReadiness(state.threat, state.threat);
     ensureNextNpo();
     saveState();
     renderAll();

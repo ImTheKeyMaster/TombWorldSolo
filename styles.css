@@ -1105,8 +1105,22 @@ select, input[type="text"], input[type="number"], input:not([type]) {
   background: rgba(0,0,0,.22);
 }
 .strategy-spawn-list li small { grid-column: 2; }
-.strategy-dices { display: flex; gap: 4px; grid-row: 1 / span 2; }
-.strategy-dices .die-face { width: 30px; height: 30px; }
+.strategy-dice { display: flex; gap: 6px; grid-row: 1 / span 2; }
+.strategy-die {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 38px;
+  color: #c9ffe1;
+  border: 1px solid rgba(97,255,173,.55);
+  border-radius: 9px;
+  background: linear-gradient(145deg, rgba(55,210,126,.24), rgba(4,76,39,.3));
+  box-shadow: 0 0 14px rgba(55,210,126,.12), inset 0 1px rgba(255,255,255,.10);
+}
+.strategy-die .die-face,
+.strategy-die .die-pips { width: 30px; height: 30px; }
+.strategy-location select.opening-guard { pointer-events: none; }
 .strategy-location { display: grid; gap: 7px; color: var(--muted); font-size: .8rem; }
 .strategy-location select { width: 100%; }
 .strategy-flow-actions { display: flex; justify-content: flex-end; }

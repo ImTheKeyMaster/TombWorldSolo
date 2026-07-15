@@ -1134,7 +1134,7 @@
     els.strategyDialogTitle.textContent = `Turning Point ${result.turn}`;
     els.strategySpawnLocation.value = result.location || "Mission-defined entry point";
     const spawnedMarkup = result.spawned.length
-      ? `<ul class="strategy-spawn-list">${result.spawned.map(item => `<li><span class="strategy-dice">${(item.dice || []).map(value => renderDieFace(value, "normal")).join("")}</span><strong>${escapeHtml(item.name)}</strong><small>2D6 result ${item.roll}</small></li>`).join("")}</ul>`
+      ? `<ul class="strategy-spawn-list">${result.spawned.map(item => `<li><span class="strategy-dice">${(item.dice || []).map(value => `<span class="strategy-die">${renderDieFace(value, "normal")}</span>`).join("")}</span><strong>${escapeHtml(item.name)}</strong><small>2D6 result ${item.roll}</small></li>`).join("")}</ul>`
       : `<p class="strategy-empty">No reinforcements generated.</p>`;
     const eventText = result.events.length ? result.events.map(escapeHtml).join(", ") : "None";
     els.strategyFlowSteps.innerHTML = `
@@ -1143,7 +1143,18 @@
       <div class="strategy-step complete"><span>✓</span><div><strong>Threat response checked</strong><small>Threat ${result.threat} · Grade ${result.grade}</small></div></div>
       <div class="strategy-step ${result.spawnCount ? "complete" : "muted-step"}"><span>${result.spawnCount ? "✓" : "–"}</span><div><strong>Reinforcements</strong><small>${result.spawnCount} generated${result.blocked ? ` · ${result.blocked} blocked by battlefield limit` : ""}</small>${spawnedMarkup}</div></div>
       <div class="strategy-step ${result.events.length ? "complete" : "muted-step"}"><span>${result.events.length ? "✓" : "–"}</span><div><strong>Tomb World events</strong><small>${eventText}</small></div></div>`;
-    els.strategyDialog.showModal();
+    // On iOS Safari, the tap that opens the dialog can fall through to the
+    // select element at the same screen position and open its native menu.
+    // Briefly make the select untouchable and wait for the opening tap to end.
+    const previouslyFocused = document.activeElement;
+    if (previouslyFocused && typeof previouslyFocused.blur === "function") previouslyFocused.blur();
+    els.strategySpawnLocation.classList.add("opening-guard");
+    window.setTimeout(() => {
+      if (!els.strategyDialog.open) els.strategyDialog.showModal();
+      window.setTimeout(() => {
+        els.strategySpawnLocation.classList.remove("opening-guard");
+      }, 650);
+    }, 80);
   }
 
   function updateStrategySpawnLocation() {

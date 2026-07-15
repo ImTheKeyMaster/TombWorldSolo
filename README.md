@@ -66,3 +66,9 @@ This project is an unofficial fan-made play aid. Its board diagrams are simplifi
 Kill Team, Necrons, Tomb World, and related names are trademarks or intellectual property of Games Workshop Limited. This project is not affiliated with or endorsed by Games Workshop.
 
 - Dice results are displayed as standard pip faces rather than numerals.
+
+
+## v23 fixes
+
+- Strategy Phase reinforcement dice now use framed green pip dice matching normal-hit results.
+- Added an iOS opening guard so the reinforcement entry-point menu remains closed when the Strategy Phase dialog appears.

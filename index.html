@@ -10,7 +10,7 @@
 <title>Tomb World Solo Command</title>
 <link href="favicon.svg?v=19" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="styles.css?v=23" rel="stylesheet"/>
+<link href="styles.css?v=24" rel="stylesheet"/>
 </head>
 <body>
 <div aria-hidden="true" class="ambient-grid"></div>
@@ -119,14 +119,6 @@
 <div class="command-footer">
 <button class="button secondary" id="strategyBtn" type="button">Start Next Turning Point</button>
 </div>
-<div aria-label="Session controls" class="command-session-controls">
-<p class="eyebrow">SESSION CONTROLS</p>
-<div class="command-session-actions">
-<button class="button ghost" id="resetCampaignBtn" type="button">Reset Session</button>
-<button class="button secondary" id="exportBtn" type="button">Export Save</button>
-<label class="button secondary file-button">Import Save<input accept="application/json" id="importInput" type="file"/></label>
-</div>
-</div>
 </section><section aria-labelledby="rosterTab" class="panel workspace-panel roster-panel" hidden="" id="rosterWorkspace" role="tabpanel">
 <div class="panel-heading roster-heading">
 <div>
@@ -151,6 +143,14 @@
 </div>
 <select aria-label="Mission selection" class="full-select" id="missionSelect"></select>
 <div class="mission-card" id="missionCard"></div>
+<div aria-label="Session controls" class="command-session-controls mission-session-controls">
+<p class="eyebrow">SESSION CONTROLS</p>
+<div class="command-session-actions">
+<button class="button ghost" id="resetCampaignBtn" type="button">Start New Game</button>
+<button class="button secondary" id="exportBtn" type="button">Export Save</button>
+<label class="button secondary file-button">Import Save<input accept="application/json" id="importInput" type="file"/></label>
+</div>
+</div>
 </section><section aria-labelledby="eventTab" class="panel workspace-panel focused-tool-panel" hidden="" id="eventWorkspace" role="tabpanel">
 <div class="panel-heading compact">
 <div>
@@ -374,8 +374,7 @@
     <div class="mission-change-summary" id="missionChangeSummary"></div>
     <div class="mission-change-actions">
       <button class="button ghost" id="cancelMissionChangeBtn" type="button">Cancel</button>
-      <button class="button secondary" id="keepMissionRosterBtn" type="button">Keep Current Roster</button>
-      <button class="button primary" id="generateMissionRosterBtn" type="button">Generate Mission Roster</button>
+      <button class="button primary" id="confirmMissionChangeBtn" type="button">Start New Game</button>
     </div>
   </div>
 </dialog>
@@ -392,6 +391,6 @@
 <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
 <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
 </footer>
-<script src="app.js?v=23"></script>
+<script src="app.js?v=24"></script>
 </body>
 </html>

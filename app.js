@@ -378,8 +378,7 @@
       requestMissionChange(e.target.value);
     });
     byId("cancelMissionChangeBtn").addEventListener("click", cancelMissionChange);
-    byId("keepMissionRosterBtn").addEventListener("click", () => confirmMissionChange(false));
-    byId("generateMissionRosterBtn").addEventListener("click", () => confirmMissionChange(true));
+    byId("confirmMissionChangeBtn").addEventListener("click", confirmMissionChange);
     els.missionChangeDialog.addEventListener("cancel", event => {
       event.preventDefault();
       cancelMissionChange();
@@ -1252,25 +1251,20 @@
     const target = MISSIONS.find(m => m.id === missionId);
     const activeCount = state.npos.filter(n => n.wounds > 0).length;
     const totalCount = state.npos.length;
-
-    if (totalCount === 0) {
-      applyMissionChange(missionId, false);
-      return;
-    }
+    const rule = missionRosterRule(missionId);
 
     pendingMissionChange = { missionId, previousMissionId: state.missionId };
-    const rule = missionRosterRule(missionId);
-    els.missionChangeTitle.textContent = `Change to ${target.name}?`;
+    els.missionChangeTitle.textContent = `Start a new game with ${target.name}?`;
     els.missionChangeSummary.innerHTML = `
-      <p>The current roster contains <strong>${activeCount} active NPO${activeCount === 1 ? "" : "s"}</strong> and ${totalCount} total roster entr${totalCount === 1 ? "y" : "ies"}.</p>
+      <p>Changing missions will <strong>start a new game</strong> and reset the current turning point, Threat Level, NPO roster, mission progress, anomalies, Battlefield Snapshot, and Battle Record.</p>
+      <p>Your current game contains <strong>${activeCount} active NPO${activeCount === 1 ? "" : "s"}</strong> and ${totalCount} total roster entr${totalCount === 1 ? "y" : "ies"}.</p>
       <div class="mission-roster-requirement">
-        <span class="eyebrow">NEW MISSION SETUP</span>
+        <span class="eyebrow">NEW GAME SETUP</span>
         <strong>${escapeHtml(rule.label)}</strong>
         <p>${escapeHtml(rule.description)}</p>
       </div>
-      <p class="muted">Keeping the current roster is useful when you are only reviewing the mission. Generating a mission roster replaces the existing roster and cannot be undone unless you exported a save.</p>
+      <p class="muted">Export the current save before continuing if you may want to return to this game.</p>
     `;
-    byId("generateMissionRosterBtn").textContent = missionId === "scout-sub-crypt" ? "Clear Roster for Mission" : "Generate Mission Roster";
     els.missionSelect.blur();
     els.missionChangeDialog.showModal();
   }
@@ -1283,21 +1277,25 @@
     moveFocusAwayFromMissionSelect();
   }
 
-  function confirmMissionChange(generateRoster) {
+  function confirmMissionChange() {
     if (!pendingMissionChange) return;
     const missionId = pendingMissionChange.missionId;
     els.missionSelect.blur();
     if (els.missionChangeDialog.open) els.missionChangeDialog.close();
     pendingMissionChange = null;
-    applyMissionChange(missionId, generateRoster);
+    startNewGame(missionId);
     moveFocusAwayFromMissionSelect();
   }
 
-  function applyMissionChange(missionId, generateRoster) {
+  function startNewGame(missionId = MISSIONS[0].id) {
+    state = defaultState();
     state.missionId = missionId;
+    generateMissionStartingRoster(missionId, false);
+    state.log = [];
     const mission = currentMission();
-    if (generateRoster) generateMissionStartingRoster(missionId, false);
-    addLog(`Mission selected: ${mission.name}.${generateRoster ? " Starting NPO roster updated for this mission." : " Current NPO roster retained."}`);
+    addLog(`New game started: ${mission.name}.`);
+    syncSnapshotControls();
+    ensureNextNpo();
     saveAndRender();
   }
 
@@ -1307,10 +1305,6 @@
       next = MISSIONS[(MISSIONS.findIndex(m => m.id === next.id) + 1) % MISSIONS.length];
     }
     requestMissionChange(next.id);
-  }
-
-  function rollD3() {
-    return Math.ceil(randomInt(1, 6) / 2);
   }
 
   function generateMissionStartingRoster(missionId = state.missionId, render = true) {
@@ -1813,11 +1807,10 @@
   }
 
   function resetSession() {
-    const confirmed = window.confirm("Reset the full session, roster, mission progress, and activity log?");
+    const mission = currentMission();
+    const confirmed = window.confirm(`Start a new game of ${mission.name}? This will reset the turning point, Threat Level, NPO roster, mission progress, anomalies, Battlefield Snapshot, and Battle Record.`);
     if (!confirmed) return;
-    state = defaultState();
-    syncSnapshotControls();
-    saveAndRender();
+    startNewGame(state.missionId);
   }
 
   function exportSave() {

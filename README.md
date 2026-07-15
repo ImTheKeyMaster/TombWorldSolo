@@ -19,8 +19,9 @@ A visual, static web app for running solo or cooperative Kill Team battles again
 - Enemy attack resolver that rolls NPO saves, applies AP and cover, calculates damage, and updates wounds automatically
 - Skull watermark on incapacitated NPO cards
 - Turning point and Strategy phase controls
+- Mission changes warn that a new game will begin and automatically reset the session with the selected mission’s starting NPO setup
 - Local browser saving, plus JSON import and export
-- Mobile session controls docked to the bottom of the screen
+- Session controls placed at the bottom of the Mission tab
 - Responsive layout for a Windows PC, tablet, or phone
 - No build tools, frameworks, server, or external assets required
 

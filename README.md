@@ -7,8 +7,8 @@ A visual, static web app for running solo or cooperative Kill Team battles again
 - App-wide mobile-friendly tabs for Command, Roster, Mission, Anomalies, Battle Record, and Instructions
 - Built-in Instructions tab covering setup, activation, visual dice, player attacks, wounds, events, saves, and the complete AI decision logic
 
-- A visible, locked **Next to Activate** NPO preview before you complete the Battlefield Snapshot
-- One-click **Activate Next Enemy** decision engine with visual attack dice, highlighted critical hits, normal hits, and misses
+- A visible, locked **Next to Activate** NPO preview before you complete the NPO Perspective Snapshot
+- One-click **Activate Next NPO** decision engine with visual attack dice, highlighted critical hits, normal hits, and misses
 - Editable NPO roster with type, behavior, wounds, weapon note, ready state, and damage tracking
 - Default Necron Warrior, Scarab Swarm, Macrocyte, and Tomb Crawler profiles
 - 2D6-style Necron roster and reinforcement generation
@@ -16,7 +16,7 @@ A visual, static web app for running solo or cooperative Kill Team battles again
 - Tabbed Mission Control, Tomb Anomalies, and Battle Record tools for better mobile use
 - Six Tomb World mission-assistant presets with progress trackers and responsive schematic board layouts
 - Random tomb events, including awakened Necrons, living metal repair, reanimation, shifting passages, and temporal effects
-- Player attack resolver that rolls NPO saves, applies AP and cover, calculates damage, and updates wounds automatically
+- Enemy attack resolver that rolls NPO saves, applies AP and cover, calculates damage, and updates wounds automatically
 - Skull watermark on incapacitated NPO cards
 - Turning point and Strategy phase controls
 - Local browser saving, plus JSON import and export
@@ -50,14 +50,14 @@ No workflow file or build command is needed.
 The app follows the broad Joint Ops structure:
 
 1. Queue and lock a ready NPO using the current attack opportunity, mission pressure, exposure, and proximity.
-2. Show that operative before activation so the Battlefield Snapshot can be completed specifically for it.
+2. Show that operative before activation so the NPO Perspective Snapshot can be completed specifically for it.
 3. Follow the selected NPO's behavior priority.
 4. Break ambiguous decisions using the threat principle, choosing the result most harmful to the player.
 5. Display the order, action sequence, target priority, movement intent, and weapon-profile guidance.
 6. Roll the primary NPO attack visually whenever the activation includes a Fight or Shoot action.
-7. The player resolves defence and special rules using the official datacards. Player attacks against an NPO can be entered through the NPO card, where the app rolls saves and applies damage.
+7. Resolve the enemy operative’s defence and special rules using the official datacards. Enemy attacks against an NPO can be entered through the NPO card, where the app rolls saves and applies damage.
 
-The **Battlefield Snapshot** supplies information the browser cannot see, such as whether the queued NPO is engaged, has a valid shot, can charge, or is blocked by a hatch. The queued NPO remains locked while you change these settings. After activation, the app immediately displays and locks the next ready enemy.
+The **NPO Perspective Snapshot** supplies information the browser cannot see, such as whether the queued NPO is engaged, has a valid shot, can charge, or is blocked by a hatch. The queued NPO remains locked while you change these settings. After activation, the app immediately displays and locks the next ready NPO.
 
 ## Rules and intellectual property note
 

@@ -67,7 +67,7 @@
       number: "01",
       name: "Shifting Labyrinth",
       summary: "Escape through a tomb complex whose exit point can migrate along the far edge as the battle develops.",
-      goal: "Win by getting at least half of the player operatives out through the escape point.",
+      goal: "Win by getting at least half of the enemy operatives out through the escape point.",
       trackerLabel: "Operatives escaped",
       trackerMax: 12,
       setup: "Begin with a randomized Necron force distributed in the far territory. Use the official map and setup instructions."
@@ -120,7 +120,7 @@
       goal: "End a turning point with every surviving operative grouped in the far drop zone and clear of NPO control range.",
       trackerLabel: "Operatives regrouped",
       trackerMax: 12,
-      setup: "Use the official phasing point rules when player operatives cross hatchway access points."
+      setup: "Use the official phasing point rules when enemy operatives cross hatchway access points."
     }
   ];
 
@@ -128,7 +128,7 @@
   const MISSION_MAPS = {
     "shifting-labyrinth": {
       orientation: "left",
-      note: "Player A begins at the left edge. NPOs deploy throughout Player B territory. The escape point starts at the centre of the far edge and may move during the battle.",
+      note: "Enemy operatives begin at the left edge. NPOs deploy throughout NPO territory. The escape point starts at the centre of the far edge and may move during the battle.",
       walls: [[180,30,180,155],[270,155,270,300],[430,30,430,160],[610,150,610,300],[680,300,680,460],[180,155,610,155],[270,300,680,300],[430,390,610,390]],
       hatches: [[270,215,"v"],[430,95,"v"],[430,350,"v"],[520,155,"h"],[560,300,"h"],[610,225,"v"]],
       npos: [[485,95],[545,225],[485,350]],
@@ -136,7 +136,7 @@
     },
     "demolition-protocol": {
       orientation: "left",
-      note: "Player A begins at the left edge. NPOs deploy throughout Player B territory. Green access points are the suggested hatchways and breach points to track for Sabotage.",
+      note: "Enemy operatives begin at the left edge. NPOs deploy throughout NPO territory. Green access points are the suggested hatchways and breach points to track for Sabotage.",
       walls: [[350,30,350,175],[500,30,500,185],[140,175,650,175],[250,175,250,325],[450,175,450,460],[650,175,650,325],[150,325,650,325]],
       hatches: [[350,100,"v"],[500,110,"v"],[250,245,"v"],[450,245,"v"],[650,245,"v"],[300,175,"h"],[550,175,"h"],[340,325,"h"],[555,325,"h"]],
       npos: [[545,105],[555,245],[520,385]],
@@ -144,7 +144,7 @@
     },
     "recover-transponder": {
       orientation: "bottom",
-      note: "Player A begins along the lower edge. Place the three objective markers in separate rooms and distribute the starting NPOs among those rooms.",
+      note: "Enemy operatives begin along the lower edge. Place the three objective markers in separate rooms and distribute the starting NPOs among those rooms.",
       walls: [[30,110,770,110],[250,110,250,265],[520,110,520,365],[30,265,520,265],[250,365,770,365]],
       hatches: [[250,185,"v"],[520,190,"v"],[520,320,"v"],[150,265,"h"],[385,265,"h"],[650,365,"h"]],
       npos: [[205,205],[455,185],[625,320]],
@@ -152,7 +152,7 @@
     },
     "destroy-sarcophagus": {
       orientation: "bottom",
-      note: "Player A begins along the lower edge. Half of the starting NPOs deploy in the room containing the sarcophagus; the remainder spread across the other rooms.",
+      note: "Enemy operatives begin along the lower edge. Half of the starting NPOs deploy in the room containing the sarcophagus; the remainder spread across the other rooms.",
       walls: [[350,30,350,305],[530,120,530,365],[350,120,770,120],[30,305,530,305],[150,305,150,460],[150,395,530,395]],
       hatches: [[350,185,"v"],[530,185,"v"],[530,340,"v"],[245,305,"h"],[440,305,"h"],[330,395,"h"]],
       npos: [[425,180],[475,220],[620,175],[250,245]],
@@ -160,7 +160,7 @@
     },
     "scout-sub-crypt": {
       orientation: "bottom",
-      note: "Player A begins along the lower edge. No NPOs are placed at setup. Each numbered room can awaken a new group when first opened or entered.",
+      note: "Enemy operatives begin along the lower edge. No NPOs are placed at setup. Each numbered room can awaken a new group when first opened or entered.",
       walls: [[160,30,160,235],[360,30,360,335],[590,100,590,335],[30,165,360,165],[360,255,770,255],[150,345,590,345]],
       hatches: [[160,105,"v"],[360,100,"v"],[360,285,"v"],[590,180,"v"],[250,165,"h"],[480,255,"h"],[300,345,"h"]],
       npos: [],
@@ -168,7 +168,7 @@
     },
     "regroup": {
       orientation: "left-regroup",
-      note: "Player A begins at the left edge. The outlined far zone is Player B's drop zone. Green hatchways are phasing points that can relocate operatives.",
+      note: "Enemy operatives begin at the left edge. The outlined far zone is NPO drop zone. Green hatchways are phasing points that can relocate operatives.",
       walls: [[200,30,200,250],[390,30,390,460],[520,30,520,205],[200,135,650,135],[30,285,520,285],[200,395,770,395]],
       hatches: [[200,100,"v"],[390,90,"v"],[390,225,"v"],[520,115,"v"],[285,285,"h"],[455,285,"h"],[300,395,"h"],[620,395,"h"]],
       npos: [[480,85],[610,245],[500,345]],
@@ -225,14 +225,14 @@
     {
       name: "Subjugation Glyphs",
       tag: "MORALE DISRUPTION",
-      effect: "Randomly test player operatives until one suffers an APL reduction or all have been tested, following the official event card procedure.",
+      effect: "Randomly test enemy operatives until one suffers an APL reduction or all have been tested, following the official event card procedure.",
       log: "Subjugation glyphs erode the invaders' coordination."
     },
     {
       name: "Transdimensional Relocation",
       tag: "POSITIONAL ANOMALY",
-      effect: "Randomly swap pairs of player operative positions up to three times, where legal.",
-      log: "Reality shifts and player operatives exchange positions."
+      effect: "Randomly swap pairs of enemy operative positions up to three times, where legal.",
+      log: "Reality shifts and enemy operatives exchange positions."
     },
     {
       name: "Stirrings of Horror",
@@ -472,15 +472,15 @@
         <rect class="map-zone map-zone-player" x="30" y="265" width="740" height="100"></rect>
         <rect class="map-zone map-zone-drop" x="30" y="365" width="740" height="95" rx="0 0 7 7"></rect>
         <line class="map-boundary" x1="30" y1="265" x2="770" y2="265"></line>
-        <text class="map-zone-label" x="52" y="430">PLAYER A DROP ZONE</text>
-        <text class="map-zone-label enemy-label" x="52" y="58">PLAYER B TERRITORY</text>`
+        <text class="map-zone-label" x="52" y="430">ENEMY DROP ZONE</text>
+        <text class="map-zone-label enemy-label" x="52" y="58">NPO TERRITORY</text>`
       : `
         <rect class="map-zone map-zone-drop" x="30" y="30" width="130" height="430" rx="7 0 0 7"></rect>
         <rect class="map-zone map-zone-player" x="160" y="30" width="240" height="430"></rect>
         <rect class="map-zone map-zone-enemy" x="400" y="30" width="370" height="430" rx="0 7 7 0"></rect>
         <line class="map-boundary" x1="400" y1="30" x2="400" y2="460"></line>
-        <text class="map-zone-label vertical-label" x="76" y="245" transform="rotate(-90 76 245)">PLAYER A DROP ZONE</text>
-        <text class="map-zone-label enemy-label" x="565" y="58">PLAYER B TERRITORY</text>
+        <text class="map-zone-label vertical-label" x="76" y="245" transform="rotate(-90 76 245)">ENEMY DROP ZONE</text>
+        <text class="map-zone-label enemy-label" x="565" y="58">NPO TERRITORY</text>
         ${map.orientation === "left-regroup" ? `<rect class="map-regroup-zone" x="635" y="42" width="122" height="406" rx="9"></rect><text class="map-zone-label regroup-zone-label" x="696" y="438" text-anchor="middle">PLAYER B DROP ZONE</text>` : ""}`;
 
     const walls = map.walls.map(([x1,y1,x2,y2]) =>
@@ -557,9 +557,9 @@
       ${missionMapSvg(mission, true)}
       <p class="map-dialog-note">${escapeHtml(map.note)}</p>
       <div class="map-legend" aria-label="Board layout legend">
-        <span><i class="legend-swatch drop"></i> Player A drop zone</span>
-        <span><i class="legend-swatch player"></i> Player A territory</span>
-        <span><i class="legend-swatch enemy"></i> Player B territory</span>
+        <span><i class="legend-swatch drop"></i> Enemy drop zone</span>
+        <span><i class="legend-swatch player"></i> Enemy territory</span>
+        <span><i class="legend-swatch enemy"></i> NPO territory</span>
         <span><i class="legend-symbol npo"></i> Suggested NPO area</span>
         <span><i class="legend-symbol hatch"></i> Hatch / access point</span>
         <span><i class="legend-symbol marker"></i> Mission marker</span>
@@ -586,7 +586,7 @@
         <p class="mission-map-note">${escapeHtml(MISSION_MAPS[mission.id].note)}</p>
         <div class="map-legend compact" aria-label="Board layout legend">
           <span><i class="legend-swatch drop"></i> A drop zone</span>
-          <span><i class="legend-swatch enemy"></i> B territory</span>
+          <span><i class="legend-swatch enemy"></i> NPO territory</span>
           <span><i class="legend-symbol npo"></i> NPO</span>
           <span><i class="legend-symbol hatch"></i> Hatch</span>
           <span><i class="legend-symbol marker"></i> Mission marker</span>
@@ -642,7 +642,7 @@
         <p class="eyebrow">NEXT TO ACTIVATE</p>
         <h3>${escapeHtml(next.name)}</h3>
         <p>${escapeHtml(next.type)} · ${escapeHtml(BEHAVIOR_LABELS[next.behavior] || next.behavior)} · ${next.wounds}/${next.maxWounds} wounds</p>
-        <small>Complete the Battlefield Snapshot for this operative, then select Activate Next Enemy.</small>
+        <small>Complete the NPO Perspective Snapshot for this operative, then select Activate Next NPO.</small>
       </div>
       <span class="next-enemy-lock">LOCKED</span>`;
   }
@@ -685,7 +685,7 @@
           </div>
           <div class="npo-weapon">${escapeHtml(npo.weapon || "No weapon note")}</div>
           <div class="npo-profile">Attack ${npo.attackDice || 4} · Hit ${npo.hit || 4}+ · Damage ${npo.normalDamage || 3}/${npo.critDamage || 4}</div>
-          <button type="button" class="resolve-player-attack" data-action="resolve-attack" ${npo.wounds <= 0 ? "disabled" : ""}>Resolve Player Attack</button>
+          <button type="button" class="resolve-player-attack" data-action="resolve-attack" ${npo.wounds <= 0 ? "disabled" : ""}>Resolve Enemy Attack</button>
           <div class="npo-controls">
             <button type="button" data-action="damage" title="Apply one damage">−1 W</button>
             <button type="button" data-action="heal" title="Restore one wound">+1 W</button>
@@ -723,7 +723,7 @@
         <div class="activation-empty">
           <div class="pulse-ring"></div>
           <h3>Command core standing by</h3>
-          <p>The operative shown in Next to Activate is locked and ready for its Battlefield Snapshot.</p>
+          <p>The operative shown in Next to Activate is locked and ready for its NPO Perspective Snapshot.</p>
         </div>`;
       return;
     }
@@ -743,7 +743,7 @@
           <strong class="hit-text">${result.attackRoll.hits} normal hit${result.attackRoll.hits === 1 ? "" : "s"}</strong>
           <span>${result.attackRoll.misses} miss${result.attackRoll.misses === 1 ? "" : "es"}</span>
         </div>
-        <p class="dice-note">Attack dice are rolled automatically. Resolve the player operative's defence and special rules on the tabletop.</p>
+        <p class="dice-note">Attack dice are rolled automatically. Resolve the enemy operative's defence and special rules on the tabletop.</p>
       </section>` : "";
 
     els.activationOutput.innerHTML = `
@@ -903,14 +903,14 @@
       if (ctx.engaged) {
         order = "Engage";
         actions.push({ title: "Fight", detail: `Fight ${target}. Use the target most likely to be incapacitated.` });
-        actions.push({ title: "Fight again or reposition", detail: "If a second Fight is legal for this operative, resolve it. Otherwise move to engage the next most mission-critical player operative." });
+        actions.push({ title: "Fight again or reposition", detail: "If a second Fight is legal for this operative, resolve it. Otherwise move to engage the next most mission-critical enemy operative." });
       } else if (ctx.canCharge) {
         order = "Engage";
         actions.push({ title: "Charge", detail: `Take the shortest legal route to ${target}, using cover on the approach when routes are equally short.` });
         actions.push({ title: "Fight", detail: "Fight the charged operative. Prioritize a wounded or mission-critical target." });
       } else {
         actions.push({ title: "Reposition", detail: `Move toward ${target}, ending in cover if possible.` });
-        actions.push({ title: "Dash", detail: "Continue toward the closest player operative, remaining in cover where possible." });
+        actions.push({ title: "Dash", detail: "Continue toward the closest enemy operative, remaining in cover where possible." });
       }
     } else if (npo.behavior === "marksman") {
       if (ctx.engaged) {
@@ -937,7 +937,7 @@
         order = "Engage";
         actions.push({ title: "Fight", detail: `Fight ${target}. Use claws or the operative's melee profile.` });
         if (ctx.validShot) {
-          actions.push({ title: "Shoot", detail: `If still legal, shoot ${target} or the next highest-priority player operative.` });
+          actions.push({ title: "Shoot", detail: `If still legal, shoot ${target} or the next highest-priority enemy operative.` });
         } else {
           actions.push({ title: "Reposition", detail: "Move to control space, block a hatchway, or obtain a firing lane." });
         }
@@ -959,7 +959,7 @@
       if (ctx.missionCritical) {
         if (ctx.validShot) {
           order = "Engage";
-          actions.push({ title: "Shoot", detail: `Shoot the player operative interacting with the mission objective. ${targetPriorityText(ctx)}` });
+          actions.push({ title: "Shoot", detail: `Shoot the enemy operative interacting with the mission objective. ${targetPriorityText(ctx)}` });
           actions.push({ title: "Hold position", detail: "Remain within control range of the objective or access route. Use any remaining action to improve cover." });
         } else if (ctx.canCharge) {
           order = "Engage";
@@ -995,12 +995,12 @@
   }
 
   function chooseTargetText(ctx) {
-    if (ctx.missionCritical && ctx.targetWounded) return "the wounded player operative most important to the mission";
-    if (ctx.missionCritical) return "the player operative most important to the mission";
-    if (ctx.targetWounded) return "the wounded player operative most likely to be incapacitated";
-    if (ctx.cover === "open") return "the closest exposed player operative";
-    if (ctx.cover === "obscured") return "the closest valid player operative that is least obscured";
-    return "the closest valid player operative, preferring one not in cover";
+    if (ctx.missionCritical && ctx.targetWounded) return "the wounded enemy operative most important to the mission";
+    if (ctx.missionCritical) return "the enemy operative most important to the mission";
+    if (ctx.targetWounded) return "the wounded enemy operative most likely to be incapacitated";
+    if (ctx.cover === "open") return "the closest exposed enemy operative";
+    if (ctx.cover === "obscured") return "the closest valid enemy operative that is least obscured";
+    return "the closest valid enemy operative, preferring one not in cover";
   }
 
   function targetPriorityText(ctx) {
@@ -1013,9 +1013,9 @@
 
   function buildRationale(npo, ctx) {
     const reasons = [];
-    if (ctx.engaged) reasons.push("a player operative is already within control range");
+    if (ctx.engaged) reasons.push("an enemy operative is already within control range");
     if (ctx.validShot) reasons.push("a legal shot is available");
-    if (ctx.missionCritical) reasons.push("a player operative is threatening the mission objective");
+    if (ctx.missionCritical) reasons.push("an enemy operative is threatening the mission objective");
     if (ctx.targetWounded) reasons.push("a wounded target can be finished off");
     if (!reasons.length) reasons.push("the NPO must improve its position for a future attack");
     return `${npo.name} was selected because ${reasons.join(" and ")}. Resolve any true tie in the way that is worst for the player.`;

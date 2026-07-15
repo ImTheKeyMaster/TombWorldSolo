@@ -47,7 +47,7 @@
 <div class="panel-heading">
 <div>
 <p class="eyebrow">ENEMY COMMAND CORE</p>
-<h2 id="commandHeading">Activate Next Enemy</h2>
+<h2 id="commandHeading">Activate Next NPO</h2>
 </div>
 <div class="turn-chip">Turning Point <strong id="turnNumber">1</strong></div>
 </div>
@@ -67,8 +67,8 @@
 <div class="snapshot-card">
 <div class="snapshot-header">
 <div>
-<h3>Battlefield Snapshot</h3>
-<p>Set these once as the situation changes. The activation button uses the current snapshot immediately.</p>
+<h3>NPO Perspective Snapshot</h3>
+<p>Set these for the NPO next to activate. The activation button uses the current snapshot immediately.</p>
 </div>
 <button class="text-button" id="clearSnapshotBtn" type="button">Clear</button>
 </div>
@@ -79,8 +79,8 @@
 <label class="toggle"><input checked="" id="ctxCanReachLos" type="checkbox"/><span>Can move to line of sight</span></label>
 <label class="toggle"><input id="ctxDoorBlocked" type="checkbox"/><span>Closed hatch blocks route</span></label>
 <label class="toggle"><input id="ctxTargetsClustered" type="checkbox"/><span>Multiple targets clustered</span></label>
-<label class="toggle"><input id="ctxMissionCritical" type="checkbox"/><span>Player on mission objective</span></label>
-<label class="toggle"><input id="ctxTargetWounded" type="checkbox"/><span>A player operative is wounded</span></label>
+<label class="toggle"><input id="ctxMissionCritical" type="checkbox"/><span>An enemy operative controlling a mission objective</span></label>
+<label class="toggle"><input id="ctxTargetWounded" type="checkbox"/><span>An enemy operative is wounded</span></label>
 </div>
 <div class="distance-row">
 <label for="ctxDistance">Closest player distance</label>
@@ -101,7 +101,7 @@
 <span class="activate-icon">▶</span>
 <span>
 <small>ONE-CLICK AI DECISION</small>
-          Activate Next Enemy
+          Activate Next NPO
         </span>
 </button>
 <article aria-live="polite" class="activation-output" id="activationOutput">
@@ -162,14 +162,14 @@
 <ol class="activity-log expanded-log" id="activityLog"></ol>
 </section><section aria-labelledby="instructionsTab" class="panel workspace-panel instructions-panel" hidden="" id="instructionsWorkspace" role="tabpanel">
 <div class="panel-heading"><div><p class="eyebrow">FIELD MANUAL</p><h2>How to Use the App</h2></div><span class="instruction-badge">QUICK START</span></div>
-<div class="instruction-callout"><strong>Normal turn flow</strong><span>Command → set the snapshot → activate the queued enemy → resolve the result → repeat. Use Roster whenever a player operative attacks an NPO.</span></div>
+<div class="instruction-callout"><strong>Normal turn flow</strong><span>Command → set the snapshot → activate the queued NPO → resolve the result → repeat. Use Roster whenever an enemy operative attacks an NPO.</span></div>
 <div class="instruction-grid">
 <article class="instruction-card"><span class="logic-number">01</span><h3>Choose the mission and roster</h3><p>Open <strong>Mission</strong> to select a scenario and track progress. Open <strong>Roster</strong> to use the default Necrons, generate a force, or edit behavior, wounds, save, and attack profile.</p></article>
-<article class="instruction-card"><span class="logic-number">02</span><h3>Review the queued enemy</h3><p>The <strong>Command</strong> tab identifies the next NPO before activation. Its roster card also carries a NEXT marker. The selection stays locked while you complete the snapshot.</p></article>
-<article class="instruction-card"><span class="logic-number">03</span><h3>Set the Battlefield Snapshot</h3><p>Enter range, line of sight, charge availability, cover, objectives, and nearby targets for the displayed NPO. These choices feed its behavior decision tree.</p></article>
-<article class="instruction-card"><span class="logic-number">04</span><h3>Activate the enemy</h3><p>Press <strong>Activate Next Enemy</strong>. Follow the order, movement, target priority, action sequence, and visual attack roll shown by the app.</p></article>
+<article class="instruction-card"><span class="logic-number">02</span><h3>Review the queued NPO</h3><p>The <strong>Command</strong> tab identifies the next NPO before activation. Its roster card also carries a NEXT marker. The selection stays locked while you complete the snapshot.</p></article>
+<article class="instruction-card"><span class="logic-number">03</span><h3>Set the NPO Perspective Snapshot</h3><p>Enter range, line of sight, charge availability, cover, objectives, and nearby targets for the displayed NPO. These choices represent what that NPO can see, reach, or prioritize, and they feed its behavior decision tree.</p></article>
+<article class="instruction-card"><span class="logic-number">04</span><h3>Activate the NPO</h3><p>Press <strong>Activate Next NPO</strong>. Follow the order, movement, target priority, action sequence, and visual attack roll shown by the app.</p></article>
 <article class="instruction-card"><span class="logic-number">05</span><h3>Read the dice</h3><p>Dice use normal pip faces. Gold is a critical hit or save, green is a normal hit or save, and dim gray is a miss.</p><div class="dice-key"><span class="key-chip critical-key">Critical</span><span class="key-chip hit-key">Hit / Save</span><span class="key-chip miss-key">Miss</span></div></article>
-<article class="instruction-card"><span class="logic-number">06</span><h3>Resolve a player attack</h3><p>Open <strong>Roster</strong> and select <strong>Resolve Player Attack</strong> on the target. Enter retained hits, damage, Defence dice, AP, and cover. The app rolls saves and updates wounds.</p></article>
+<article class="instruction-card"><span class="logic-number">06</span><h3>Resolve an enemy attack</h3><p>Open <strong>Roster</strong> and select <strong>Resolve Enemy Attack</strong> on the target. Enter retained hits, damage, Defence dice, AP, and cover. The app rolls saves and updates wounds.</p></article>
 <article class="instruction-card"><span class="logic-number">07</span><h3>Advance the battle</h3><p>Use <strong>Anomalies</strong> for random events, <strong>Battle Record</strong> for the log, and <strong>Start Next Turning Point</strong> to ready survivors and advance the turn.</p></article>
 <article class="instruction-card"><span class="logic-number">08</span><h3>Save the session</h3><p>The browser saves automatically. Use <strong>Export Save</strong> for a JSON backup and <strong>Import Save</strong> to restore it elsewhere.</p></article>
 </div>
@@ -178,7 +178,7 @@
 <article>
 <span class="logic-number">01</span>
 <h3>Queue the operative</h3>
-<p>The next ready NPO is selected and locked before you complete the Battlefield Snapshot, so the context always applies to the operative shown.</p>
+<p>The next ready NPO is selected and locked before you complete the NPO Perspective Snapshot, so the context always applies to the operative shown.</p>
 </article>
 <article>
 <span class="logic-number">02</span>
@@ -188,7 +188,7 @@
 <article>
 <span class="logic-number">03</span>
 <h3>Break ties against the player</h3>
-<p>Choose the result most likely to incapacitate a player operative or prevent mission success. Randomize only true ties.</p>
+<p>Choose the result most likely to incapacitate an enemy operative or prevent mission success. Randomize only true ties.</p>
 </article>
 <article>
 <span class="logic-number">04</span>

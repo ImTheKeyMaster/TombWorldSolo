@@ -75,7 +75,12 @@ Kill Team, Necrons, Tomb World, and related names are trademarks or intellectual
 - Added an iOS opening guard so the reinforcement entry-point menu remains closed when the Strategy Phase dialog appears.
 
 
-## Version 25
+## Version 26
 
 - Mission changes now always create a fresh mission-appropriate NPO roster after resetting the game.
 - The roster replacement control is named **Regenerate NPO Roster** and asks for confirmation before deleting the current roster.
+
+
+## v26 mission state fix
+
+Mission selection is now transactional. The current mission remains selected while the confirmation dialog is open, and the confirmed mission, generated roster, and local save are committed together. Non-Scout missions include a defensive roster fallback so they cannot start with zero NPOs.

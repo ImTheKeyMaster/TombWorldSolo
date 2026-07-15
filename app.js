@@ -3,6 +3,7 @@
 
   const STORAGE_KEY = "tomb-world-solo-command-v1";
   let pendingMissionChange = null;
+  let suppressMissionSelectChange = false;
 
   const NPO_TEMPLATES = {
     "Necron Warrior": {
@@ -375,6 +376,7 @@
     els.threatSlider.addEventListener("input", e => setThreat(Number(e.target.value), false));
     els.threatSlider.addEventListener("change", saveAndRender);
     els.missionSelect.addEventListener("change", e => {
+      if (suppressMissionSelectChange) return;
       requestMissionChange(e.target.value);
     });
     byId("cancelMissionChangeBtn").addEventListener("click", cancelMissionChange);
@@ -486,7 +488,7 @@
     els.threatSlider.value = String(state.threat);
     els.threatMeterFill.style.width = `${(state.threat / 15) * 100}%`;
     els.threatStatus.textContent = threatStatusText(state.threat);
-    els.missionSelect.value = state.missionId;
+    setMissionSelectValue(state.missionId);
     renderMission();
     renderEvent();
     renderNextEnemy();
@@ -1242,9 +1244,15 @@
     }, 0);
   }
 
+  function setMissionSelectValue(missionId) {
+    suppressMissionSelectChange = true;
+    els.missionSelect.value = missionId;
+    window.setTimeout(() => { suppressMissionSelectChange = false; }, 0);
+  }
+
   function requestMissionChange(missionId) {
     if (!MISSIONS.some(m => m.id === missionId) || missionId === state.missionId) {
-      els.missionSelect.value = state.missionId;
+      setMissionSelectValue(state.missionId);
       return;
     }
 
@@ -1254,6 +1262,9 @@
     const rule = missionRosterRule(missionId);
 
     pendingMissionChange = { missionId, previousMissionId: state.missionId };
+    // Restore the visible select immediately. The mission is not committed until confirmation.
+    // This also prevents iOS from leaving the target option active behind the modal.
+    setMissionSelectValue(state.missionId);
     els.missionChangeTitle.textContent = `Start a new game with ${target.name}?`;
     els.missionChangeSummary.innerHTML = `
       <p>Changing missions will <strong>start a new game</strong> and reset the current turning point, Threat Level, NPO roster, mission progress, anomalies, Battlefield Snapshot, and Battle Record.</p>
@@ -1272,7 +1283,7 @@
   function cancelMissionChange() {
     els.missionSelect.blur();
     if (els.missionChangeDialog.open) els.missionChangeDialog.close();
-    els.missionSelect.value = state.missionId;
+    setMissionSelectValue(state.missionId);
     pendingMissionChange = null;
     moveFocusAwayFromMissionSelect();
   }
@@ -1288,18 +1299,31 @@
   }
 
   function startNewGame(missionId = MISSIONS[0].id) {
-    state = defaultState();
-    state.missionId = missionId;
-    state.log = [];
-    const rosterResult = generateMissionStartingRoster(missionId, false, false);
-    const mission = currentMission();
-    addLog(`New game started: ${mission.name}.`);
+    const selectedMission = MISSIONS.find(mission => mission.id === missionId) || MISSIONS[0];
+    const freshState = defaultState();
+    freshState.missionId = selectedMission.id;
+    freshState.npos = [];
+    freshState.log = [];
+    state = freshState;
+
+    const rosterResult = generateMissionStartingRoster(selectedMission.id, false, false);
+    // Defensive check: every mission except Scout Sub-Crypt must begin with NPOs.
+    if (selectedMission.id !== "scout-sub-crypt" && state.npos.length === 0) {
+      const fallbackCount = selectedMission.id === "destroy-sarcophagus" ? 7 : 5;
+      for (let i = 0; i < fallbackCount; i += 1) spawnRandomNecron(false);
+      rosterResult.count = state.npos.length;
+      rosterResult.rollText += `; fallback generated ${state.npos.length}`;
+    }
+
+    addLog(`New game started: ${selectedMission.name}.`);
     addLog(rosterResult.count === 0
-      ? `${mission.name}: no starting NPOs are deployed (${rosterResult.rollText}).`
-      : `${mission.name}: generated a fresh roster of ${rosterResult.count} NPOs (${rosterResult.rollText}).`);
+      ? `${selectedMission.name}: no starting NPOs are deployed (${rosterResult.rollText}).`
+      : `${selectedMission.name}: generated a fresh roster of ${rosterResult.count} NPOs (${rosterResult.rollText}).`);
     syncSnapshotControls();
     ensureNextNpo();
-    saveAndRender();
+    saveState();
+    renderAll();
+    setMissionSelectValue(selectedMission.id);
   }
 
   function randomMission() {

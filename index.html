@@ -10,7 +10,7 @@
 <title>Tomb World Solo Command</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="styles.css?v=15" rel="stylesheet"/>
+<link href="styles.css?v=18" rel="stylesheet"/>
 </head>
 <body>
 <div aria-hidden="true" class="ambient-grid"></div>
@@ -51,18 +51,32 @@
 </div>
 <div class="turn-chip">Turning Point <strong id="turnNumber">1</strong></div>
 </div>
+<section class="threat-console" aria-labelledby="threatConsoleHeading">
 <div class="threat-strip">
 <div class="threat-copy">
-<span>Threat Level</span>
+<span id="threatConsoleHeading">Threat Level</span>
 <strong id="threatValue">0</strong>
 <small id="threatGrade">Grade 0</small>
 </div>
+<div class="threat-meter" aria-hidden="true"><span id="threatMeterFill"></span></div>
+<div class="threat-status" id="threatStatus">Dormant. No reinforcements or event cards.</div>
+</div>
+<div class="enemy-threat-actions">
+<div><strong>Record Enemy Action</strong><small>Use these when your solo operative interacts with the tomb outside the attack resolver.</small></div>
+<button class="button ghost compact-action" id="enemyHatchBtn" type="button">Operate Hatch</button>
+<button class="button ghost compact-action" id="enemyBreachBtn" type="button">Breach</button>
+</div>
+<details class="threat-override">
+<summary>Manual threat override</summary>
+<div class="threat-override-controls">
 <input aria-label="Threat level" id="threatSlider" max="15" min="0" type="range" value="0"/>
 <div class="threat-buttons">
 <button aria-label="Decrease threat" class="icon-button" id="threatDown" type="button">−</button>
 <button aria-label="Increase threat" class="icon-button" id="threatUp" type="button">+</button>
 </div>
 </div>
+</details>
+</section>
 <section aria-live="polite" class="next-enemy-card" id="nextEnemyCard"></section>
 <div class="snapshot-card">
 <div class="snapshot-header">
@@ -112,8 +126,8 @@
 </div>
 </article>
 <div class="command-footer">
-<button class="button secondary" id="strategyBtn" type="button">Resolve Strategy Phase</button>
-<button class="button ghost" id="newTurnBtn" type="button">Start Next Turning Point</button>
+<button class="button secondary" id="strategyBtn" type="button">Resolve NPO Strategy Phase</button>
+<button class="button ghost" id="newTurnBtn" type="button">Manual: Start Next Turning Point</button>
 </div>
 </section><section aria-labelledby="rosterTab" class="panel workspace-panel roster-panel" hidden="" id="rosterWorkspace" role="tabpanel">
 <div class="panel-heading roster-heading">
@@ -123,7 +137,7 @@
 <p class="section-copy">The app starts with Tomb World Necrons. Add, edit, wound, ready, or remove operatives at any time.</p>
 </div>
 <div class="roster-actions">
-<button class="button ghost" id="generateRosterBtn" type="button">Generate Random Necron Roster</button>
+<button class="button ghost" id="generateRosterBtn" type="button">Generate Starting NPO Roster</button>
 <button class="button secondary" id="addNpoBtn" type="button">Add NPO</button>
 </div>
 </div>
@@ -170,7 +184,7 @@
 <article class="instruction-card"><span class="logic-number">04</span><h3>Activate the NPO</h3><p>Press <strong>Activate Next NPO</strong>. Follow the order, movement, target priority, action sequence, and visual attack roll shown by the app.</p></article>
 <article class="instruction-card"><span class="logic-number">05</span><h3>Read the dice</h3><p>Dice use normal pip faces. Gold is a critical hit or save, green is a normal hit or save, and dim gray is a miss.</p><div class="dice-key"><span class="key-chip critical-key">Critical</span><span class="key-chip hit-key">Hit / Save</span><span class="key-chip miss-key">Miss</span></div></article>
 <article class="instruction-card"><span class="logic-number">06</span><h3>Resolve an enemy attack</h3><p>Open <strong>Roster</strong> and select <strong>Resolve Enemy Attack</strong> on the target. Enter retained hits, damage, NPO Defense Dice, NPO AP reduction, and cover. The app rolls saves and updates wounds.</p></article>
-<article class="instruction-card"><span class="logic-number">07</span><h3>Advance the battle</h3><p>Use <strong>Anomalies</strong> for random events, <strong>Battle Record</strong> for the log, and <strong>Start Next Turning Point</strong> to ready survivors and advance the turn.</p></article>
+<article class="instruction-card"><span class="logic-number">07</span><h3>Advance the battle</h3><p>Threat increases automatically when NPOs Shoot or Fight, when confirmed enemy actions trigger it, and when Operate Hatch or Breach checks succeed. Use <strong>Resolve NPO Strategy Phase</strong> to advance the Turning Point, ready survivors, generate reinforcements, check events, and record the result. The manual Turning Point button is only a fallback.</p></article>
 <article class="instruction-card"><span class="logic-number">08</span><h3>Save the session</h3><p>The browser saves automatically. Use <strong>Export Save</strong> for a JSON backup and <strong>Import Save</strong> to restore it elsewhere.</p></article>
 </div>
 <div class="instruction-notes"><h3>Important tabletop notes</h3><ul><li>This is a decision and tracking aid. Use current datacards and official rules for visibility, cover, weapon rules, combat sequencing, and mission maps.</li><li>An NPO at 0 wounds is dimmed, marked with a skull, and removed from the activation queue.</li><li>The AI decision principles and tie-break guidance are included below in this Instructions tab.</li></ul></div>
@@ -252,6 +266,14 @@
 </div>
 <input id="attackTargetId" type="hidden"/>
 <div class="target-status" id="attackTargetStatus"></div>
+<label>Enemy action type
+<select id="enemyAttackType">
+<option value="shoot">Shoot (non-Silent)</option>
+<option value="silent-shoot">Shoot (Silent)</option>
+<option value="fight">Fight</option>
+<option value="other">Other damaging action</option>
+</select>
+</label>
 <div class="form-split">
 <label>Normal hits rolled
 <div class="number-stepper">
@@ -306,9 +328,33 @@
 </div>
 <div class="modal-actions">
 <button class="button ghost" formmethod="dialog" value="cancel">Cancel</button>
-<button class="button primary" id="resolveAttackBtn" value="default">Roll Saves &amp; Apply Damage</button>
+<button class="button primary" id="resolveAttackBtn" value="default">Roll Saves &amp; Preview Damage</button>
 </div>
 </form>
+</dialog>
+
+<dialog class="strategy-overlay" id="strategyDialog">
+  <div class="strategy-flow-shell">
+    <p class="eyebrow">NPO STRATEGY PHASE</p>
+    <h2 id="strategyDialogTitle">Turning Point</h2>
+    <div class="strategy-flow-steps" id="strategyFlowSteps"></div>
+    <label class="strategy-location">Reinforcement entry point
+      <select id="strategySpawnLocation">
+        <option value="Mission-defined entry point">Mission-defined entry point</option>
+        <option value="Spawn Point A">Spawn Point A</option>
+        <option value="Spawn Point B">Spawn Point B</option>
+        <option value="Spawn Point C">Spawn Point C</option>
+        <option value="North edge">North edge</option>
+        <option value="South edge">South edge</option>
+        <option value="East edge">East edge</option>
+        <option value="West edge">West edge</option>
+        <option value="Custom entry point">Custom entry point</option>
+      </select>
+    </label>
+    <div class="strategy-flow-actions">
+      <button class="button primary" id="closeStrategyBtn" type="button">Begin Activations</button>
+    </div>
+  </div>
 </dialog>
 <dialog class="modal map-modal" id="mapDialog">
 <div class="map-modal-shell">
@@ -323,6 +369,6 @@
 <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
 <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
 </footer>
-<script src="app-v16.js?v=16"></script>
+<script src="app-v18.js?v=18"></script>
 </body>
 </html>

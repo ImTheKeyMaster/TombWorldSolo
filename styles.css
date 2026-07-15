@@ -979,3 +979,153 @@ select, input[type="text"], input[type="number"], input:not([type]) {
 .attack-modal label.compact-toggle span {
   flex: 1 1 auto;
 }
+
+/* v17 automatic threat console */
+.threat-console {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.threat-console .threat-strip {
+  grid-template-columns: minmax(120px, auto) 1fr;
+  align-items: center;
+  gap: 10px 18px;
+  margin: 0;
+}
+.threat-meter {
+  height: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(133, 255, 185, .25);
+  border-radius: 999px;
+  background: rgba(0,0,0,.35);
+}
+.threat-meter span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--green), #e7b950, #ef6666);
+  transition: width .25s ease;
+}
+.threat-status {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: .86rem;
+}
+.enemy-threat-actions {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(0,0,0,.18);
+}
+.enemy-threat-actions div { display: grid; gap: 2px; }
+.enemy-threat-actions small { color: var(--muted); }
+.compact-action { min-height: 38px; padding: 8px 12px; }
+.threat-override {
+  color: var(--muted);
+  font-size: .85rem;
+}
+.threat-override summary { cursor: pointer; width: fit-content; }
+.threat-override-controls {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding-top: 10px;
+}
+@media (max-width: 700px) {
+  .enemy-threat-actions { grid-template-columns: 1fr 1fr; }
+  .enemy-threat-actions div { grid-column: 1 / -1; }
+  .threat-console .threat-strip { grid-template-columns: 1fr; }
+  .threat-meter, .threat-status { grid-column: 1; }
+}
+
+/* v18 automated Strategy Phase */
+.strategy-overlay {
+  width: min(760px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 20px;
+  background: #06110c;
+  color: var(--text);
+  box-shadow: 0 30px 110px rgba(0,0,0,.78);
+}
+.strategy-overlay::backdrop {
+  background: rgba(0, 6, 4, .9);
+  backdrop-filter: blur(9px);
+}
+.strategy-flow-shell {
+  padding: clamp(22px, 4vw, 38px);
+  display: grid;
+  gap: 20px;
+}
+.strategy-flow-shell h2 {
+  margin: -8px 0 0;
+  font-size: clamp(2rem, 8vw, 4rem);
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+.strategy-flow-steps { display: grid; gap: 10px; }
+.strategy-step {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(95, 255, 181, .045);
+}
+.strategy-step > span {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  color: var(--accent);
+  font-weight: 900;
+}
+.strategy-step strong { display: block; font-size: 1rem; }
+.strategy-step small { display: block; color: var(--muted); margin-top: 3px; }
+.strategy-step.muted-step { opacity: .72; background: rgba(255,255,255,.02); }
+.strategy-spawn-list { list-style: none; padding: 10px 0 0; margin: 0; display: grid; gap: 8px; }
+.strategy-spawn-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr);
+  column-gap: 9px;
+  align-items: center;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: rgba(0,0,0,.22);
+}
+.strategy-spawn-list li small { grid-column: 2; }
+.strategy-dices { display: flex; gap: 4px; grid-row: 1 / span 2; }
+.strategy-dices .die-face { width: 30px; height: 30px; }
+.strategy-location { display: grid; gap: 7px; color: var(--muted); font-size: .8rem; }
+.strategy-location select { width: 100%; }
+.strategy-flow-actions { display: flex; justify-content: flex-end; }
+.new-npo-badge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--accent);
+  font-size: .58rem;
+  letter-spacing: .12em;
+}
+@media (max-width: 640px) {
+  .strategy-overlay { width: calc(100vw - 12px); max-height: calc(100dvh - 12px); }
+  .strategy-flow-shell { padding: 20px 15px calc(20px + env(safe-area-inset-bottom)); gap: 14px; }
+  .strategy-flow-shell h2 { font-size: 2.15rem; }
+  .strategy-step { padding: 11px; grid-template-columns: 32px minmax(0,1fr); }
+  .strategy-step > span { width: 28px; height: 28px; }
+  .strategy-flow-actions .button { width: 100%; }
+}

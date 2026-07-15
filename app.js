@@ -1269,7 +1269,7 @@
     byId("playerCritHits").value = 0;
     byId("playerNormalDamage").value = 3;
     byId("playerCritDamage").value = 4;
-    byId("defenceDice").value = 0;
+    byId("defenceDice").value = 3;
     byId("attackAp").value = 0;
     byId("retainCoverSave").checked = false;
     els.combatResultPreview.innerHTML = `<p class="muted">Enter the enemy attack result, then roll the NPO's saves.</p>`;

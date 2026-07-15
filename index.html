@@ -10,7 +10,7 @@
 <title>Tomb World Solo Command</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="styles.css?v=12" rel="stylesheet"/>
+<link href="styles.css?v=13" rel="stylesheet"/>
 </head>
 <body>
 <div aria-hidden="true" class="ambient-grid"></div>
@@ -169,7 +169,7 @@
 <article class="instruction-card"><span class="logic-number">03</span><h3>Set the NPO Perspective Snapshot</h3><p>Enter range, line of sight, charge availability, cover, objectives, and nearby targets for the displayed NPO. These choices represent what that NPO can see, reach, or prioritize, and they feed its behavior decision tree.</p></article>
 <article class="instruction-card"><span class="logic-number">04</span><h3>Activate the NPO</h3><p>Press <strong>Activate Next NPO</strong>. Follow the order, movement, target priority, action sequence, and visual attack roll shown by the app.</p></article>
 <article class="instruction-card"><span class="logic-number">05</span><h3>Read the dice</h3><p>Dice use normal pip faces. Gold is a critical hit or save, green is a normal hit or save, and dim gray is a miss.</p><div class="dice-key"><span class="key-chip critical-key">Critical</span><span class="key-chip hit-key">Hit / Save</span><span class="key-chip miss-key">Miss</span></div></article>
-<article class="instruction-card"><span class="logic-number">06</span><h3>Resolve an enemy attack</h3><p>Open <strong>Roster</strong> and select <strong>Resolve Enemy Attack</strong> on the target. Enter retained hits, damage, Defence dice, AP, and cover. The app rolls saves and updates wounds.</p></article>
+<article class="instruction-card"><span class="logic-number">06</span><h3>Resolve an enemy attack</h3><p>Open <strong>Roster</strong> and select <strong>Resolve Enemy Attack</strong> on the target. Enter retained hits, damage, NPO Defense Dice, NPO AP reduction, and cover. The app rolls saves and updates wounds.</p></article>
 <article class="instruction-card"><span class="logic-number">07</span><h3>Advance the battle</h3><p>Use <strong>Anomalies</strong> for random events, <strong>Battle Record</strong> for the log, and <strong>Start Next Turning Point</strong> to ready survivors and advance the turn.</p></article>
 <article class="instruction-card"><span class="logic-number">08</span><h3>Save the session</h3><p>The browser saves automatically. Use <strong>Export Save</strong> for a JSON backup and <strong>Import Save</strong> to restore it elsewhere.</p></article>
 </div>
@@ -286,18 +286,18 @@
 </label>
 </div>
 <div class="form-split">
-<label>Defence dice
+<label>NPO Defense Dice
 <div class="number-stepper">
-<input id="defenceDice" inputmode="numeric" max="6" min="0" required="" type="number" value="0"/>
-<button aria-label="Decrease defence dice" class="stepper-button" data-step="-1" data-step-target="defenceDice" type="button">−</button>
-<button aria-label="Increase defence dice" class="stepper-button" data-step="1" data-step-target="defenceDice" type="button">+</button>
+<input id="defenceDice" inputmode="numeric" max="6" min="0" required="" type="number" value="3"/>
+<button aria-label="Decrease NPO defense dice" class="stepper-button" data-step="-1" data-step-target="defenceDice" type="button">−</button>
+<button aria-label="Increase NPO defense dice" class="stepper-button" data-step="1" data-step-target="defenceDice" type="button">+</button>
 </div>
 </label>
-<label>AP reduction
+<label>NPO AP reduction
 <div class="number-stepper">
 <input id="attackAp" inputmode="numeric" max="3" min="0" required="" type="number" value="0"/>
-<button aria-label="Decrease AP reduction" class="stepper-button" data-step="-1" data-step-target="attackAp" type="button">−</button>
-<button aria-label="Increase AP reduction" class="stepper-button" data-step="1" data-step-target="attackAp" type="button">+</button>
+<button aria-label="Decrease NPO AP reduction" class="stepper-button" data-step="-1" data-step-target="attackAp" type="button">−</button>
+<button aria-label="Increase NPO AP reduction" class="stepper-button" data-step="1" data-step-target="attackAp" type="button">+</button>
 </div>
 </label>
 </div>
@@ -324,6 +324,6 @@
 <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
 <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
 </footer>
-<script src="app.js?v=12"></script>
+<script src="app.js?v=13"></script>
 </body>
 </html>

@@ -3,7 +3,6 @@
 
   const STORAGE_KEY = "tomb-world-solo-command-v1";
   let pendingMissionChange = null;
-  let suppressMissionSelectChange = false;
 
   const NPO_TEMPLATES = {
     "Necron Warrior": {
@@ -376,8 +375,7 @@
     els.threatSlider.addEventListener("input", e => setThreat(Number(e.target.value), false));
     els.threatSlider.addEventListener("change", saveAndRender);
     els.missionSelect.addEventListener("change", e => {
-      if (suppressMissionSelectChange) return;
-      requestMissionChange(e.target.value);
+      requestMissionChange(e.currentTarget.value);
     });
     byId("cancelMissionChangeBtn").addEventListener("click", cancelMissionChange);
     byId("confirmMissionChangeBtn").addEventListener("click", confirmMissionChange);
@@ -1245,9 +1243,9 @@
   }
 
   function setMissionSelectValue(missionId) {
-    suppressMissionSelectChange = true;
+    // Assigning a select value in JavaScript does not emit a change event,
+    // so no suppression flag or timing guard is needed.
     els.missionSelect.value = missionId;
-    window.setTimeout(() => { suppressMissionSelectChange = false; }, 0);
   }
 
   function requestMissionChange(missionId) {
@@ -1262,9 +1260,8 @@
     const rule = missionRosterRule(missionId);
 
     pendingMissionChange = { missionId, previousMissionId: state.missionId };
-    // Restore the visible select immediately. The mission is not committed until confirmation.
-    // This also prevents iOS from leaving the target option active behind the modal.
-    setMissionSelectValue(state.missionId);
+    // Leave the newly selected mission visible while confirmation is pending.
+    // The app state is not committed until Start New Game is pressed.
     els.missionChangeTitle.textContent = `Start a new game with ${target.name}?`;
     els.missionChangeSummary.innerHTML = `
       <p>Changing missions will <strong>start a new game</strong> and reset the current turning point, Threat Level, NPO roster, mission progress, anomalies, Battlefield Snapshot, and Battle Record.</p>
@@ -1276,8 +1273,17 @@
       </div>
       <p class="muted">Export the current save before continuing if you may want to return to this game.</p>
     `;
+    // Blur first and wait two animation frames before opening the modal.
+    // This lets iOS fully dismiss its native select picker instead of carrying
+    // the picker interaction into the confirmation dialog.
     els.missionSelect.blur();
-    els.missionChangeDialog.showModal();
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        if (pendingMissionChange?.missionId === missionId && !els.missionChangeDialog.open) {
+          els.missionChangeDialog.showModal();
+        }
+      });
+    });
   }
 
   function cancelMissionChange() {

@@ -10,7 +10,7 @@
 <title>Tomb World Solo Command</title>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="styles.css?v=8" rel="stylesheet"/>
+<link href="styles.css?v=11" rel="stylesheet"/>
 </head>
 <body>
 <div aria-hidden="true" class="ambient-grid"></div>
@@ -246,7 +246,7 @@
 <form id="attackForm" method="dialog">
 <div class="modal-heading">
 <div>
-<p class="eyebrow">PLAYER ATTACK RESOLVER</p>
+<p class="eyebrow">ENEMY ATTACK RESOLVER</p>
 <h2 id="attackDialogTitle">Attack NPO</h2>
 </div>
 <button aria-label="Close" class="icon-button" formmethod="dialog" value="cancel">×</button>
@@ -254,20 +254,56 @@
 <input id="attackTargetId" type="hidden"/>
 <div class="target-status" id="attackTargetStatus"></div>
 <div class="form-split">
-<label>Normal hits rolled<input id="playerNormalHits" max="20" min="0" required="" type="number" value="2"/></label>
-<label>Critical hits rolled<input id="playerCritHits" max="20" min="0" required="" type="number" value="0"/></label>
+<label>Normal hits rolled
+<div class="number-stepper">
+<input id="playerNormalHits" inputmode="numeric" max="20" min="0" required="" type="number" value="0"/>
+<button aria-label="Decrease normal hits" class="stepper-button" data-step="-1" data-step-target="playerNormalHits" type="button">−</button>
+<button aria-label="Increase normal hits" class="stepper-button" data-step="1" data-step-target="playerNormalHits" type="button">+</button>
+</div>
+</label>
+<label>Critical hits rolled
+<div class="number-stepper">
+<input id="playerCritHits" inputmode="numeric" max="20" min="0" required="" type="number" value="0"/>
+<button aria-label="Decrease critical hits" class="stepper-button" data-step="-1" data-step-target="playerCritHits" type="button">−</button>
+<button aria-label="Increase critical hits" class="stepper-button" data-step="1" data-step-target="playerCritHits" type="button">+</button>
+</div>
+</label>
 </div>
 <div class="form-split">
-<label>Normal damage<input id="playerNormalDamage" max="20" min="1" required="" type="number" value="3"/></label>
-<label>Critical damage<input id="playerCritDamage" max="20" min="1" required="" type="number" value="4"/></label>
+<label>Normal damage
+<div class="number-stepper">
+<input id="playerNormalDamage" inputmode="numeric" max="20" min="1" required="" type="number" value="3"/>
+<button aria-label="Decrease normal damage" class="stepper-button" data-step="-1" data-step-target="playerNormalDamage" type="button">−</button>
+<button aria-label="Increase normal damage" class="stepper-button" data-step="1" data-step-target="playerNormalDamage" type="button">+</button>
+</div>
+</label>
+<label>Critical damage
+<div class="number-stepper">
+<input id="playerCritDamage" inputmode="numeric" max="20" min="1" required="" type="number" value="4"/>
+<button aria-label="Decrease critical damage" class="stepper-button" data-step="-1" data-step-target="playerCritDamage" type="button">−</button>
+<button aria-label="Increase critical damage" class="stepper-button" data-step="1" data-step-target="playerCritDamage" type="button">+</button>
+</div>
+</label>
 </div>
 <div class="form-split">
-<label>Defence dice<input id="defenceDice" max="6" min="0" required="" type="number" value="3"/></label>
-<label>AP reduction<input id="attackAp" max="3" min="0" required="" type="number" value="0"/></label>
+<label>Defence dice
+<div class="number-stepper">
+<input id="defenceDice" inputmode="numeric" max="6" min="0" required="" type="number" value="0"/>
+<button aria-label="Decrease defence dice" class="stepper-button" data-step="-1" data-step-target="defenceDice" type="button">−</button>
+<button aria-label="Increase defence dice" class="stepper-button" data-step="1" data-step-target="defenceDice" type="button">+</button>
+</div>
+</label>
+<label>AP reduction
+<div class="number-stepper">
+<input id="attackAp" inputmode="numeric" max="3" min="0" required="" type="number" value="0"/>
+<button aria-label="Decrease AP reduction" class="stepper-button" data-step="-1" data-step-target="attackAp" type="button">−</button>
+<button aria-label="Increase AP reduction" class="stepper-button" data-step="1" data-step-target="attackAp" type="button">+</button>
+</div>
+</label>
 </div>
 <label class="toggle compact-toggle"><input id="retainCoverSave" type="checkbox"/><span>Retain one normal save for cover</span></label>
 <div class="combat-result-preview" id="combatResultPreview">
-<p class="muted">Enter the player attack result, then roll the NPO's saves.</p>
+<p class="muted">Enter the enemy attack result, then roll the NPO's saves.</p>
 </div>
 <div class="modal-actions">
 <button class="button ghost" formmethod="dialog" value="cancel">Cancel</button>
@@ -288,6 +324,6 @@
 <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
 <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
 </footer>
-<script src="app.js?v=8"></script>
+<script src="app.js?v=11"></script>
 </body>
 </html>

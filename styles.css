@@ -493,7 +493,7 @@ select, input[type="text"], input[type="number"], input:not([type]) {
 .resolve-player-attack:hover { border-color: rgba(255,200,91,.55); background: rgba(255,190,68,.13); }
 .resolve-player-attack:disabled { cursor: not-allowed; opacity: .45; }
 
-/* Player attack resolver */
+/* Enemy attack resolver */
 .attack-modal { width: min(560px, calc(100% - 24px)); }
 .form-note { margin: -4px 0 0; color: var(--muted); font-size: .69rem; line-height: 1.4; }
 .target-status {
@@ -889,4 +889,55 @@ select, input[type="text"], input[type="number"], input:not([type]) {
   .map-modal-shell { padding: 13px; }
   .map-modal .mission-map-frame { overflow: auto; }
   .map-modal .mission-map-svg { width: 820px; max-width: none; }
+}
+
+
+/* Numeric steppers */
+.number-stepper {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px 42px;
+  gap: 6px;
+  align-items: stretch;
+  margin-top: 6px;
+}
+.number-stepper input[type="number"] {
+  min-width: 0;
+  margin: 0;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.number-stepper input[type="number"]::-webkit-inner-spin-button,
+.number-stepper input[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+.stepper-button {
+  display: grid;
+  place-items: center;
+  min-width: 42px;
+  min-height: 42px;
+  padding: 0;
+  border: 1px solid rgba(112, 255, 178, 0.24);
+  border-radius: 9px;
+  background: rgba(97, 255, 173, 0.07);
+  color: var(--green-bright);
+  font-size: 1.35rem;
+  font-weight: 850;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.stepper-button:hover,
+.stepper-button:focus-visible {
+  border-color: rgba(112, 255, 178, 0.62);
+  background: rgba(97, 255, 173, 0.14);
+  outline: none;
+}
+.stepper-button:active { transform: translateY(1px); }
+
+@media (max-width: 420px) {
+  .number-stepper { grid-template-columns: minmax(0, 1fr) 40px 40px; gap: 5px; }
+  .stepper-button { min-width: 40px; min-height: 42px; }
 }

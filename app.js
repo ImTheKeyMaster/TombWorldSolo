@@ -372,6 +372,8 @@
     els.npoType.addEventListener("change", applyTemplateToDialog);
     els.npoForm.addEventListener("submit", saveNpoFromDialog);
     els.attackForm.addEventListener("submit", resolvePlayerAttack);
+    els.attackDialog.addEventListener("click", handleNumberStepper);
+    els.attackDialog.addEventListener("change", clampNumberInput);
     byId("closeMapBtn").addEventListener("click", () => els.mapDialog.close());
     els.mapDialog.addEventListener("click", event => {
       if (event.target === els.mapDialog) els.mapDialog.close();
@@ -1258,17 +1260,41 @@
     els.attackTargetId.value = npo.id;
     els.attackDialogTitle.textContent = `Attack ${npo.name}`;
     els.attackTargetStatus.innerHTML = `<strong>${escapeHtml(npo.name)}</strong><span>${npo.wounds} / ${npo.maxWounds} wounds · Save ${escapeHtml(npo.save || "4+")}</span>`;
-    byId("playerNormalHits").value = 2;
+    byId("playerNormalHits").value = 0;
     byId("playerCritHits").value = 0;
     byId("playerNormalDamage").value = 3;
     byId("playerCritDamage").value = 4;
-    byId("defenceDice").value = 3;
+    byId("defenceDice").value = 0;
     byId("attackAp").value = 0;
     byId("retainCoverSave").checked = false;
-    els.combatResultPreview.innerHTML = `<p class="muted">Enter the player attack result, then roll the NPO's saves.</p>`;
+    els.combatResultPreview.innerHTML = `<p class="muted">Enter the enemy attack result, then roll the NPO's saves.</p>`;
     els.resolveAttackBtn.disabled = false;
     els.resolveAttackBtn.textContent = "Roll Saves & Apply Damage";
     els.attackDialog.showModal();
+  }
+
+  function handleNumberStepper(event) {
+    const button = event.target.closest("[data-step-target]");
+    if (!button) return;
+    const input = byId(button.dataset.stepTarget);
+    if (!input) return;
+
+    const min = input.min === "" ? Number.NEGATIVE_INFINITY : Number(input.min);
+    const max = input.max === "" ? Number.POSITIVE_INFINITY : Number(input.max);
+    const step = Number(button.dataset.step || input.step || 1);
+    const current = Number.isFinite(Number(input.value)) ? Number(input.value) : Math.max(0, min);
+    input.value = String(Math.min(max, Math.max(min, current + step)));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  function clampNumberInput(event) {
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement) || input.type !== "number") return;
+    const min = input.min === "" ? Number.NEGATIVE_INFINITY : Number(input.min);
+    const max = input.max === "" ? Number.POSITIVE_INFINITY : Number(input.max);
+    const fallback = Number.isFinite(min) ? min : 0;
+    const value = Number.isFinite(Number(input.value)) ? Number(input.value) : fallback;
+    input.value = String(Math.min(max, Math.max(min, value)));
   }
 
   function resolvePlayerAttack(event) {

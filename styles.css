@@ -960,3 +960,22 @@ select, input[type="text"], input[type="number"], input:not([type]) {
   font-size: .78rem;
   font-weight: 750;
 }
+
+/* Keep the cover-save checkbox and its label aligned as one horizontal control. */
+.attack-modal label.compact-toggle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+.attack-modal label.compact-toggle input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+.attack-modal label.compact-toggle span {
+  flex: 1 1 auto;
+}

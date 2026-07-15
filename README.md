@@ -84,3 +84,8 @@ Kill Team, Necrons, Tomb World, and related names are trademarks or intellectual
 ## v27 mission state fix
 
 Mission selection is now transactional. The current mission remains selected while the confirmation dialog is open, and the confirmed mission, generated roster, and local save are committed together. Non-Scout missions include a defensive roster fallback so they cannot start with zero NPOs.
+
+
+## v28 fix
+
+Fixed mission changes from Scout Sub-Crypt by restoring the missing D3 roller used by mission-specific starting-roster generation. Tested all six mission selections, roster generation, saved mission persistence, and reload behavior.

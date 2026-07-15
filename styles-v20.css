@@ -1176,3 +1176,43 @@ select, input[type="text"], input[type="number"], input:not([type]) {
     width: calc(100vw - 24px);
   }
 }
+
+/* v21 mission-change confirmation */
+.mission-change-modal {
+  width: min(620px, calc(100vw - 28px));
+}
+.mission-change-shell {
+  padding: 26px;
+}
+.mission-change-summary {
+  display: grid;
+  gap: 16px;
+  margin-top: 12px;
+}
+.mission-change-summary p {
+  margin: 0;
+}
+.mission-roster-requirement {
+  display: grid;
+  gap: 7px;
+  padding: 16px;
+  border: 1px solid rgba(93, 255, 174, .28);
+  border-radius: 14px;
+  background: rgba(5, 25, 18, .78);
+}
+.mission-roster-requirement strong {
+  font-size: 1.08rem;
+  color: var(--text-bright, #e9fff3);
+}
+.mission-change-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+@media (max-width: 620px) {
+  .mission-change-shell { padding: 20px; }
+  .mission-change-actions { display: grid; grid-template-columns: 1fr; }
+  .mission-change-actions .button { width: 100%; }
+}

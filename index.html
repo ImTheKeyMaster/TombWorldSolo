@@ -10,7 +10,7 @@
 <title>Tomb World Solo Command</title>
 <link href="favicon.svg?v=19" rel="icon" type="image/svg+xml"/>
 <link href="manifest.webmanifest" rel="manifest"/>
-<link href="styles-v20.css?v=20" rel="stylesheet"/>
+<link href="styles-v20.css?v=21" rel="stylesheet"/>
 </head>
 <body>
 <div aria-hidden="true" class="ambient-grid"></div>
@@ -360,6 +360,23 @@
     </div>
   </div>
 </dialog>
+
+<dialog class="modal mission-change-modal" id="missionChangeDialog">
+  <div class="mission-change-shell">
+    <div class="modal-heading">
+      <div>
+        <p class="eyebrow">CHANGE MISSION</p>
+        <h2 id="missionChangeTitle">Change mission?</h2>
+      </div>
+    </div>
+    <div class="mission-change-summary" id="missionChangeSummary"></div>
+    <div class="mission-change-actions">
+      <button class="button ghost" id="cancelMissionChangeBtn" type="button">Cancel</button>
+      <button class="button secondary" id="keepMissionRosterBtn" type="button">Keep Current Roster</button>
+      <button class="button primary" id="generateMissionRosterBtn" type="button">Generate Mission Roster</button>
+    </div>
+  </div>
+</dialog>
 <dialog class="modal map-modal" id="mapDialog">
 <div class="map-modal-shell">
 <div class="modal-heading">
@@ -373,6 +390,6 @@
 <p>This is an unofficial fan-made play aid. It is not affiliated with or endorsed by Games Workshop. Mission descriptions are concise play-assistant summaries, not replacements for the official rules, maps, datacards, or event cards.</p>
 <p><a href="https://www.warhammer-community.com/en-gb/downloads/kill-team/" rel="noreferrer" target="_blank">Official Kill Team downloads</a> · <a href="https://assets.warhammer-community.com/eng_19-11_kt_mission_pack_tomb_world-nmh1irpi3k-61f8fzzxqa.pdf" rel="noreferrer" target="_blank">Official Tomb World mission pack</a></p>
 </footer>
-<script src="app-v20.js?v=20"></script>
+<script src="app-v21.js?v=21"></script>
 </body>
 </html>

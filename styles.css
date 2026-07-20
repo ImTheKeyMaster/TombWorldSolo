@@ -1281,3 +1281,25 @@ select, input[type="text"], input[type="number"], input:not([type]) {
   }
   .action-feedback { bottom: calc(18px + env(safe-area-inset-bottom)); }
 }
+
+/* v29: keep new-game setup navigation reachable on small screens */
+@media (max-width: 620px) {
+  .new-game-setup .setup-content {
+    padding-bottom: calc(86px + env(safe-area-inset-bottom));
+  }
+
+  .new-game-setup .setup-navigation {
+    position: sticky;
+    z-index: 20;
+    bottom: 0;
+    margin: 20px -20px -20px;
+    padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line);
+    background: rgba(4, 18, 12, .97);
+    box-shadow: 0 -12px 28px rgba(0, 0, 0, .32);
+  }
+
+  .new-game-setup .setup-navigation .setup-step-text {
+    display: none;
+  }
+}

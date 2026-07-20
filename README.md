@@ -89,3 +89,7 @@ Mission selection is now transactional. The current mission remains selected whi
 ## v28 fix
 
 Fixed mission changes from Scout Sub-Crypt by restoring the missing D3 roller used by mission-specific starting-roster generation. Tested all six mission selections, roster generation, saved mission persistence, and reload behavior.
+
+## v29 mobile setup navigation
+
+New Game Setup keeps its existing navigation controls at the bottom of mobile screens, with safe-area clearance, while desktop and gameplay layouts remain unchanged.
